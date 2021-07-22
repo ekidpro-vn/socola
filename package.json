@@ -1,6 +1,6 @@
 {
   "name": "@ekidpro/socola",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "./build/index.js",
   "module": "./build/index.es.js",
   "files": [
@@ -10,8 +10,9 @@
     "test": "jest --detectOpenHandles",
     "start": "start-storybook -p 1111",
     "build": "rollup -c",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "predeploy": "npm run build-storybook",
+    "deploy-storybook": "storybook-to-ghpages"
   },
   "author": "Nguyen Hong Duc",
   "license": "ISC",
