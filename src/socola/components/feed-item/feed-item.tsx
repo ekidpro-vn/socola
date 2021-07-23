@@ -48,7 +48,7 @@ const SubFeedItem: React.FC<{ Comments: Record<string, SubFeedType> | []; feedke
           })
           .catch((error) => console.log(error.message));
       },
-      [dispatch, feeds]
+      [dispatch, feeds, feedkey]
     );
 
     if (!Comments || Comments.length === 0) {
@@ -69,8 +69,17 @@ const SubFeedItem: React.FC<{ Comments: Record<string, SubFeedType> | []; feedke
               <div className="ml-4">
                 <div className="bg-gray-100 px-4 py-2 rounded-lg">
                   <div>
-                    <span className="font-semibold mr-2 text-blue-800">{UserFullName}</span>
-                    <span>{Comment}</span>
+                    <span className="font-semibold mr-2 text-blue-800 block">{UserFullName}</span>
+                    <span className="block">
+                      {Comment.split('<br />').map((item, index) => {
+                        return (
+                          <React.Fragment key={`${item}_${index}`}>
+                            {item}
+                            <br />
+                          </React.Fragment>
+                        );
+                      })}
+                    </span>
                   </div>
                 </div>
                 <div className="flex items-center mt-1">
@@ -179,7 +188,16 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
         <div className="ml-4 w-full">
           <div className="bg-gray-100 px-4 py-2 rounded-lg primary-feed">
             <span className="block font-semibold text-blue-800">{UserFullName}</span>
-            <span className="block">{Content.Content}</span>
+            <span className="block">
+              {Content.Content.split('<br />').map((item, index) => {
+                return (
+                  <React.Fragment key={`${item}_${index}`}>
+                    {item}
+                    <br />
+                  </React.Fragment>
+                );
+              })}
+            </span>
           </div>
           <div className="flex items-center mt-1">
             {LikesCount > 0 && <span className="block mr-0.5">{LikesCount}</span>}
