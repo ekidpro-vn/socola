@@ -37,11 +37,12 @@ export const TextArea: React.FC<TextAreaProps> = (props) => {
         if (!success || response.status > 400) {
           throw new Error(message || 'Post failed');
         }
+        setValueInput('');
         const newFeeds = [feeddata, ...feeds];
         dispatch(setNewFeeds(newFeeds));
       })
       .catch((error) => console.log(error.message));
-  }, [valueInput, moduleId, recordId]);
+  }, [valueInput, moduleId, recordId, dispatch, feeds]);
 
   return (
     <div>

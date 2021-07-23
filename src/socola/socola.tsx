@@ -13,7 +13,7 @@ const middleWare = applyMiddleware(thunkMiddleware);
 
 const store = createStore(rootReducer, middleWare);
 
-export const source = axios.CancelToken.source();
+// export const source = axios.CancelToken.source();
 
 export const Socola: React.FC<SocolaProps> = (props) => {
   const {
@@ -34,7 +34,6 @@ export const Socola: React.FC<SocolaProps> = (props) => {
       config.url = `${SOCOLA_URL}${config.url}`;
       config.params = {
         ...config.params,
-        cancelToken: source.token,
         token: socolaToken,
       };
     }

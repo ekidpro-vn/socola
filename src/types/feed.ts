@@ -9,7 +9,7 @@ export interface SubFeedType {
   LikesCount: number;
   PostedAt: number;
   IP: string;
-  isYouLiked: false;
+  isYouLiked: boolean;
 }
 
 export interface FeedType {
@@ -46,5 +46,5 @@ export interface FeedType {
   isDeleted: number;
   isLike: number;
   isPublic: number;
-  isYouLiked: false;
+  isYouLiked: boolean;
 }
