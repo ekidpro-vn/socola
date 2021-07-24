@@ -18,6 +18,7 @@
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.12.13",
+    "@headlessui/react": "^1.3.0",
     "@rollup/plugin-commonjs": "^17.1.0",
     "@rollup/plugin-image": "^2.0.6",
     "@rollup/plugin-node-resolve": "^11.1.1",
@@ -69,7 +70,8 @@
     "styled-components": "^5.2.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.4",
     "ts-jest": "^26.5.0",
-    "typescript": "^4.1.3"
+    "typescript": "^4.1.3",
+    "uuid": "^8.3.2"
   },
   "peerDependencies": {
     "react": "^17.0.1",
@@ -79,6 +81,7 @@
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.4"
   },
   "dependencies": {
+    "@ekidpro/ui": "0.0.16",
     "@types/react-select": "^4.0.17",
     "axios": "^0.21.1",
     "clsx": "^1.1.1",
@@ -87,6 +90,7 @@
     "react-content-loader": "^6.0.1",
     "react-redux": "^7.2.4",
     "react-select": "^4.3.1",
+    "react-webcam": "^5.2.4",
     "redux": "^4.1.0",
     "styled-components": "^5.2.1"
   },

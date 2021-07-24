@@ -1,19 +1,29 @@
+import { Modal } from '@ekidpro/ui';
 import axios from 'axios';
 import clsx from 'clsx';
-import get from 'lodash.get';
+import { get, isEmpty } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
+import { v4 as uuid } from 'uuid';
+import { SendIcon } from '../../../assets/send-icon';
 import { SECRET_KEY } from '../../../config';
-import { setNewFeeds } from '../../../store/action';
+import { removeUploadImage, setNewFeeds, setNewUploadImage } from '../../../store/action';
+import { UploadImage } from '../../../store/reducer';
+import { FeedType } from '../../../types/feed';
+import { Camera } from '../camera';
 import { optionsStatus } from './text-area.data';
+import { TextAreaStyle } from './text-area.style';
 import { TextAreaProps } from './text-area.type';
 
 export const TextArea: React.FC<TextAreaProps> = (props) => {
   const { channelId, showDate, showStatus, statusOption, moduleId, recordId } = props;
   const [valueInput, setValueInput] = useState<string>('');
   const dispatch = useDispatch();
-  const feeds = useSelector((state) => get(state, 'feeds'));
+  const feeds: FeedType[] | null = useSelector((state) => get(state, 'feeds'));
+  const uploadImages: UploadImage[] | undefined = useSelector((state) => get(state, 'uploadImages'));
+  const [status, setStatus] = useState<string | unknown>();
+  const [showModalCamera, setShowModalCamera] = useState<boolean>(false);
 
   const onPostValue = useCallback(() => {
     const formData = new FormData();
@@ -21,7 +31,7 @@ export const TextArea: React.FC<TextAreaProps> = (props) => {
     formData.set('recordid', recordId);
     formData.set('content', valueInput);
     formData.set('date', '');
-    formData.set('status', '');
+    formData.set('status', `${status}`);
     formData.set('islike', '1');
     formData.set('ispublic', '1');
     formData.set('secretkey', SECRET_KEY);
@@ -42,10 +52,51 @@ export const TextArea: React.FC<TextAreaProps> = (props) => {
         dispatch(setNewFeeds(newFeeds));
       })
       .catch((error) => console.log(error.message));
-  }, [valueInput, moduleId, recordId, dispatch, feeds]);
+  }, [valueInput, moduleId, recordId, dispatch, feeds, status]);
+
+  const onUploadImages = useCallback(
+    (files: FileList) => {
+      Object.entries(files).map((item) => {
+        const file = item[1];
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          dispatch(
+            setNewUploadImage({
+              base64Url: reader.result,
+              file,
+              id: uuid(),
+            })
+          );
+        };
+        return null;
+      });
+    },
+    [dispatch]
+  );
+
+  const onRemoveUploadImage = useCallback(
+    (id: string) => {
+      dispatch(removeUploadImage(id));
+    },
+    [dispatch]
+  );
+
+  const onCaptureCamera = useCallback(
+    (data: string) => {
+      setShowModalCamera(false);
+      dispatch(
+        setNewUploadImage({
+          base64Url: data,
+          id: uuid(),
+        })
+      );
+    },
+    [dispatch]
+  );
 
   return (
-    <div>
+    <TextAreaStyle>
       <div>
         <textarea
           value={valueInput}
@@ -55,21 +106,68 @@ export const TextArea: React.FC<TextAreaProps> = (props) => {
           className="w-full flex-1 flex items-center rounded py-2 overflow-hidden border px-3 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:border-blue-600 focus:outline-none"
         />
       </div>
+      {!isEmpty(uploadImages) && (
+        <div className="mt-3 flex items-center justify-start px-3">
+          {Object.entries(uploadImages).map((item, index) => {
+            const { base64Url, id } = item[1];
+
+            return (
+              <div className="relative mr-4 preview-image" key={`preview_${index}`}>
+                <img src={`${base64Url}`} alt="preview" className="w-20 h-20 rounded object-cover" />
+                <button
+                  onClick={() => onRemoveUploadImage(id)}
+                  className="absolute -top-1.5 -right-1.5 p-0.5 duration-300 text-white bg-red-600 rounded-full"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-3.5 w-3.5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
       {/* Control */}
-      <div className="grid grid-cols-2 mt-3">
+      <div className="grid grid-cols-2 mt-5">
         <div className="col-span-1 grid grid-cols-3 gap-x-5">
           <div className="col-span-1 grid grid-cols-3 gap-x-3">
-            <button className="col-span-1 hover:bg-indigo-50 duration-300 rounded w-10 h-10 flex justify-center items-center text-gray-500">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path
-                  fillRule="evenodd"
-                  d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                  clipRule="evenodd"
-                />
-              </svg>
+            <button className="col-span-1 hover:bg-indigo-50 duration-300 rounded w-10 h-10 text-gray-500">
+              <label htmlFor="file-input" className="w-full h-full flex justify-center items-center cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path
+                    fillRule="evenodd"
+                    d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </label>
+              <input
+                id="file-input"
+                type="file"
+                className="hidden"
+                multiple
+                accept="image/*"
+                onChange={(e) => {
+                  if (e.target.files.length > 0) {
+                    onUploadImages(e.target.files);
+                  }
+                }}
+              />
             </button>
 
-            <button className="col-span-1 hover:bg-indigo-50 duration-300 rounded w-10 h-10 flex justify-center items-center text-gray-500">
+            <button
+              onClick={() => setShowModalCamera(true)}
+              className="col-span-1 hover:bg-indigo-50 duration-300 rounded w-10 h-10 flex justify-center items-center text-gray-500"
+            >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path
                   fillRule="evenodd"
@@ -98,7 +196,11 @@ export const TextArea: React.FC<TextAreaProps> = (props) => {
 
           {showStatus && (
             <div className="col-span-1">
-              <Select options={statusOption || optionsStatus} placeholder="Status" />
+              <Select
+                options={statusOption || optionsStatus}
+                placeholder="Status"
+                onChange={(e) => setStatus(e.value)}
+              />
             </div>
           )}
         </div>
@@ -107,15 +209,35 @@ export const TextArea: React.FC<TextAreaProps> = (props) => {
           <button
             onClick={onPostValue}
             className={clsx({
-              'bg-blue-600 text-white px-4 py-2 rounded duration-300': true,
+              'bg-green-600 text-white px-4 py-2 rounded duration-300 flex items-center justify-center': true,
               'opacity-70': !valueInput,
               'opacity-100': !!valueInput,
             })}
           >
-            POST
+            <SendIcon className="w-5 h-3.5" />
+            <span className="ml-1 font-semibold">POST</span>
           </button>
         </div>
       </div>
-    </div>
+
+      <Modal show={showModalCamera} size="lg" onClose={() => setShowModalCamera(false)}>
+        <div className="flex items-center justify-between">
+          <div />
+          <span className="font-semibold uppercase block text-center text-xl">Please take a picture!</span>
+          <button className="opacity-75 hover:opacity-100" onClick={() => setShowModalCamera(false)}>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                fillRule="evenodd"
+                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
+        </div>
+        <div className="flex justify-center my-8">
+          <Camera onCapture={onCaptureCamera} />
+        </div>
+      </Modal>
+    </TextAreaStyle>
   );
 };

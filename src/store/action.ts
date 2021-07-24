@@ -1,10 +1,13 @@
 import axios from 'axios';
 import { Dispatch } from 'react';
 import { FeedType } from '../types/feed';
+import { UploadImage } from './reducer';
 
 export const ACTION_GET_FEEDS_SUCCESS = 'ACTION_GET_FEEDS_SUCCESS';
 export const ACTION_GET_FEEDS_ERROR = 'ACTION_GET_FEEDS_ERROR';
 export const ACTION_SET_NEW_FEEDS = 'ACTION_SET_NEW_FEEDS';
+export const ACTION_SET_NEW_UPLOAD_IMAGE = 'ACTION_SET_NEW_UPLOAD_IMAGE';
+export const ACTION_REMOVE_UPLOAD_IMAGE = 'ACTION_REMOVE_UPLOAD_IMAGE';
 
 const getFeedsFromApiSuccess = (data: FeedType[]) => {
   return <const>{
@@ -50,7 +53,23 @@ export const setNewFeeds = (data: FeedType[]) => {
   };
 };
 
+export const setNewUploadImage = (data: UploadImage) => {
+  return {
+    type: ACTION_SET_NEW_UPLOAD_IMAGE,
+    payload: { data },
+  };
+};
+
+export const removeUploadImage = (data: string) => {
+  return {
+    type: ACTION_REMOVE_UPLOAD_IMAGE,
+    payload: { data },
+  };
+};
+
 export type Action =
   | ReturnType<typeof getFeedsFromApiSuccess>
   | ReturnType<typeof getFeedsFromApiError>
-  | ReturnType<typeof setNewFeeds>;
+  | ReturnType<typeof setNewFeeds>
+  | ReturnType<typeof setNewUploadImage>
+  | ReturnType<typeof removeUploadImage>;
