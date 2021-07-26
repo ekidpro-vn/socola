@@ -9,7 +9,7 @@ import Select from 'react-select';
 import { v4 as uuid } from 'uuid';
 import { SendIcon } from '../../../assets/send-icon';
 import { SECRET_KEY } from '../../../config';
-import { removeUploadImage, setNewFeeds, setNewUploadImage } from '../../../store/action';
+import { removeAllUploadImage, removeUploadImage, setNewFeeds, setNewUploadImage } from '../../../store/action';
 import { UploadImage } from '../../../store/reducer';
 import { FeedType } from '../../../types/feed';
 import { Camera } from '../camera';
@@ -49,7 +49,7 @@ export const TextArea: React.FC<TextAreaProps> = (props) => {
   const dispatch = useDispatch();
   const feeds: FeedType[] | null = useSelector((state) => get(state, 'feeds'));
   const uploadImages: UploadImage[] | undefined = useSelector((state) => get(state, 'uploadImages'));
-  const [status, setStatus] = useState<string | number>();
+  const [status, setStatus] = useState<{ value: string | number; label: string } | undefined>(undefined);
   const [showModalCamera, setShowModalCamera] = useState<boolean>(false);
   const [showLikePublic, setShowLikePublic] = useState<boolean>(false);
   const [isLike, setIsLike] = useState<boolean>(true);
@@ -71,7 +71,7 @@ export const TextArea: React.FC<TextAreaProps> = (props) => {
     }
 
     if (status) {
-      formData.set('status', `${status}`);
+      formData.set('status', `${status.value}`);
     }
 
     if (uploadImages && uploadImages.length > 0) {
@@ -98,6 +98,12 @@ export const TextArea: React.FC<TextAreaProps> = (props) => {
           throw new Error(message || 'Post failed');
         }
         setValueInput('');
+        setIsPublic(true);
+        setIsLike(true);
+        setDatePickerType('text');
+        setDate(undefined);
+        setStatus(undefined);
+        dispatch(removeAllUploadImage());
         const newFeeds = [feeddata, ...feeds];
         dispatch(setNewFeeds(newFeeds));
       })
@@ -324,11 +330,7 @@ export const TextArea: React.FC<TextAreaProps> = (props) => {
 
           {showStatus && (
             <div className="col-span-1">
-              <Select
-                options={statusOption || optionsStatus}
-                placeholder="Status"
-                onChange={(e) => setStatus(e.value)}
-              />
+              <Select options={statusOption || optionsStatus} placeholder="Status" onChange={(e) => setStatus(e)} />
             </div>
           )}
         </div>
