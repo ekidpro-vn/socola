@@ -9,39 +9,14 @@ import Select from 'react-select';
 import { v4 as uuid } from 'uuid';
 import { SendIcon } from '../../../assets/send-icon';
 import { SECRET_KEY } from '../../../config';
-import { removeUploadImage, setNewFeeds, setNewUploadImage } from '../../../store/action';
+import { removeAllUploadImage, removeUploadImage, setNewFeeds, setNewUploadImage } from '../../../store/action';
 import { UploadImage } from '../../../store/reducer';
 import { FeedType } from '../../../types/feed';
+import { base64ToBlob } from '../../../utils/helper';
 import { Camera } from '../camera';
 import { optionsStatus } from './text-area.data';
 import { TextAreaStyle } from './text-area.style';
 import { TextAreaProps } from './text-area.type';
-
-const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
-  const byteCharacters = atob(b64Data);
-  const byteArrays = [];
-  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-    const slice = byteCharacters.slice(offset, offset + sliceSize);
-    const byteNumbers = new Array(slice.length);
-    for (let i = 0; i < slice.length; i++) {
-      byteNumbers[i] = slice.charCodeAt(i);
-    }
-    const byteArray = new Uint8Array(byteNumbers);
-    byteArrays.push(byteArray);
-  }
-  const blob = new Blob(byteArrays, { type: contentType });
-  return blob;
-};
-
-const base64ToBlob = (base64: string) => {
-  const block = base64.split(';');
-  // Get the content type of the image
-  const contentType = block[0].split(':')[1]; // In this case "image/gif"
-  // get the real base64 content of the file
-  const realData = block[1].split(',')[1]; // In this case "R0lGODlhPQBEAPeoAJosM...."
-  // Convert it to a blob to upload
-  return b64toBlob(realData, contentType);
-};
 
 export const TextArea: React.FC<TextAreaProps> = (props) => {
   const { channelId, showDate, showStatus, statusOption, moduleId, recordId } = props;
@@ -49,7 +24,7 @@ export const TextArea: React.FC<TextAreaProps> = (props) => {
   const dispatch = useDispatch();
   const feeds: FeedType[] | null = useSelector((state) => get(state, 'feeds'));
   const uploadImages: UploadImage[] | undefined = useSelector((state) => get(state, 'uploadImages'));
-  const [status, setStatus] = useState<string | number>();
+  const [status, setStatus] = useState<{ value: string | number; label: string } | undefined>(undefined);
   const [showModalCamera, setShowModalCamera] = useState<boolean>(false);
   const [showLikePublic, setShowLikePublic] = useState<boolean>(false);
   const [isLike, setIsLike] = useState<boolean>(true);
@@ -71,7 +46,7 @@ export const TextArea: React.FC<TextAreaProps> = (props) => {
     }
 
     if (status) {
-      formData.set('status', `${status}`);
+      formData.set('status', `${status.value}`);
     }
 
     if (uploadImages && uploadImages.length > 0) {
@@ -98,6 +73,12 @@ export const TextArea: React.FC<TextAreaProps> = (props) => {
           throw new Error(message || 'Post failed');
         }
         setValueInput('');
+        setIsPublic(true);
+        setIsLike(true);
+        setDatePickerType('text');
+        setDate(undefined);
+        setStatus(undefined);
+        dispatch(removeAllUploadImage());
         const newFeeds = [feeddata, ...feeds];
         dispatch(setNewFeeds(newFeeds));
       })
@@ -324,11 +305,7 @@ export const TextArea: React.FC<TextAreaProps> = (props) => {
 
           {showStatus && (
             <div className="col-span-1">
-              <Select
-                options={statusOption || optionsStatus}
-                placeholder="Status"
-                onChange={(e) => setStatus(e.value)}
-              />
+              <Select options={statusOption || optionsStatus} placeholder="Status" onChange={(e) => setStatus(e)} />
             </div>
           )}
         </div>

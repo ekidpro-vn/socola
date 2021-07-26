@@ -44,6 +44,13 @@ export function rootReducer(state: State = initialState, action: Action) {
       };
     }
 
+    case ACTIONS.ACTION_REMOVE_ALL_UPLOAD_IMAGE: {
+      return {
+        ...state,
+        uploadImages: [],
+      };
+    }
+
     default:
       return state;
   }
