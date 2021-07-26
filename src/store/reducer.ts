@@ -1,29 +1,31 @@
-import { FeedType } from 'types/feed';
 import * as ACTIONS from './action';
 import { Action } from './action';
-
-export interface UploadImage {
-  base64Url: string | ArrayBuffer;
-  file?: File;
-  id: string;
-}
-
-export interface State {
-  feeds: FeedType[] | null;
-  error?: string;
-  loading?: boolean;
-  uploadImages: UploadImage[];
-}
+import { State } from './type';
 
 export const initialState: State = {
   feeds: null,
   error: '',
   loading: false,
   uploadImages: [],
+  props: {
+    moduleId: '',
+    recordId: '',
+    channelId: '',
+    socolaToken: '',
+    statusOption: [],
+    showDate: true,
+    showStatus: true,
+    readOnly: false,
+    renderType: 'social',
+    userRole: '',
+  },
 };
 
 export function rootReducer(state: State = initialState, action: Action) {
   switch (action.type) {
+    case ACTIONS.ACTION_SET_PROPS:
+      return { ...state, props: action.payload.data };
+
     case ACTIONS.ACTION_GET_FEEDS_SUCCESS:
       return { ...state, feeds: action.payload.data };
 
