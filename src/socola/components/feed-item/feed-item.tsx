@@ -109,7 +109,8 @@ const SubFeedItem: React.FC<{ Comments: Record<string, SubFeedType> | []; feedke
 export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
   const [showReplyInput, setShowReplyInput] = useState<boolean>(false);
   const [valueInput, setValueInput] = useState<string>('');
-  const { UserID, UserFullName, PostedAt, Comments, Content, LikesCount, FeedKey, isYouLiked } = item;
+  const { UserID, UserFullName, PostedAt, Comments, Content, LikesCount, FeedKey, isYouLiked, isLike, CommentCount } =
+    item;
 
   const dispatch = useDispatch();
   const feeds: FeedType[] | null = useSelector((state) => get(state, 'feeds'));
@@ -196,19 +197,26 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
             </span>
           </div>
           <div className="flex items-center mt-1">
-            {LikesCount > 0 && <span className="block mr-0.5">{LikesCount}</span>}
-            <button
-              onClick={() => onLikeComment(FeedKey)}
-              className={clsx({
-                'text-gray-500 duration-300 hover:text-blue-500': !isYouLiked,
-                'text-blue-500': isYouLiked,
-              })}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
-              </svg>
-            </button>
-            <button className="mx-3 text-gray-500" onClick={() => setShowReplyInput(!showReplyInput)}>
+            {isLike ? (
+              <>
+                {LikesCount > 0 && <span className="block mr-0.5">{LikesCount}</span>}
+                <button
+                  onClick={() => onLikeComment(FeedKey)}
+                  className={clsx({
+                    'mr-3': true,
+                    'text-gray-500 duration-300 hover:text-blue-500': !isYouLiked,
+                    'text-blue-500': isYouLiked,
+                  })}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+                  </svg>
+                </button>
+              </>
+            ) : null}
+
+            {CommentCount > 0 && <span className="block mr-0.5">{CommentCount}</span>}
+            <button className="mr-3 text-gray-500" onClick={() => setShowReplyInput(!showReplyInput)}>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path
                   fillRule="evenodd"
@@ -219,6 +227,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
             </button>
             <span className="block opacity-50">{dayjs(PostedAt * 1000).fromNow()}</span>
           </div>
+
           {showReplyInput && (
             <div className="mt-2">
               <textarea
@@ -236,7 +245,41 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
               />
             </div>
           )}
+
           <SubFeedItem Comments={Comments} feedkey={FeedKey} />
+        </div>
+        <div className="flex items-start justify-end">
+          <div>
+            {Content.date && (
+              <div className="flex items-center justify-center mb-2">
+                <span className="text-gray-500">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </span>
+                <span className="font-semibold ml-2">{dayjs(Content.date).format('DD/MM/YYYY')}</span>
+              </div>
+            )}
+
+            {Content.status && (
+              <div>
+                {Content.status === 'NORMAL' && (
+                  <span className="font-semibold ml-2 px-3 py-1.5 bg-yellow-100 text-yellow-500 rounded-md">
+                    Normal
+                  </span>
+                )}
+                {Content.status === 'IMPORTANT' && (
+                  <span className="font-semibold ml-2 px-3 py-1.5 bg-purple-100 text-purple-500 rounded-md">
+                    Important
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </FeedItemStyle>

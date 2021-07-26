@@ -17,7 +17,7 @@ export const Camera: React.FC<CameraProps> = (props) => {
   const capturePhoto = useCallback(async () => {
     const imageSrc = webcamRef.current.getScreenshot();
     onCapture(imageSrc);
-  }, [webcamRef]);
+  }, [webcamRef, onCapture]);
 
   const onUserMedia = (e) => {
     console.log(e);

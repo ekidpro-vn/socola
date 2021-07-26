@@ -1,6 +1,7 @@
 import { Modal } from '@ekidpro/ui';
 import axios from 'axios';
 import clsx from 'clsx';
+import dayjs from 'dayjs';
 import { get, isEmpty } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,25 +17,74 @@ import { optionsStatus } from './text-area.data';
 import { TextAreaStyle } from './text-area.style';
 import { TextAreaProps } from './text-area.type';
 
+const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
+  const byteCharacters = atob(b64Data);
+  const byteArrays = [];
+  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    const slice = byteCharacters.slice(offset, offset + sliceSize);
+    const byteNumbers = new Array(slice.length);
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    byteArrays.push(byteArray);
+  }
+  const blob = new Blob(byteArrays, { type: contentType });
+  return blob;
+};
+
+const base64ToBlob = (base64: string) => {
+  const block = base64.split(';');
+  // Get the content type of the image
+  const contentType = block[0].split(':')[1]; // In this case "image/gif"
+  // get the real base64 content of the file
+  const realData = block[1].split(',')[1]; // In this case "R0lGODlhPQBEAPeoAJosM...."
+  // Convert it to a blob to upload
+  return b64toBlob(realData, contentType);
+};
+
 export const TextArea: React.FC<TextAreaProps> = (props) => {
   const { channelId, showDate, showStatus, statusOption, moduleId, recordId } = props;
   const [valueInput, setValueInput] = useState<string>('');
   const dispatch = useDispatch();
   const feeds: FeedType[] | null = useSelector((state) => get(state, 'feeds'));
   const uploadImages: UploadImage[] | undefined = useSelector((state) => get(state, 'uploadImages'));
-  const [status, setStatus] = useState<string | unknown>();
+  const [status, setStatus] = useState<string | number>();
   const [showModalCamera, setShowModalCamera] = useState<boolean>(false);
+  const [showLikePublic, setShowLikePublic] = useState<boolean>(false);
+  const [isLike, setIsLike] = useState<boolean>(true);
+  const [isPublic, setIsPublic] = useState<boolean>(true);
+  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [datePickerType, setDatePickerType] = useState<'text' | 'date'>('text');
 
   const onPostValue = useCallback(() => {
     const formData = new FormData();
     formData.set('moduleid', moduleId);
     formData.set('recordid', recordId);
     formData.set('content', valueInput);
-    formData.set('date', '');
-    formData.set('status', `${status}`);
-    formData.set('islike', '1');
-    formData.set('ispublic', '1');
+    formData.set('islike', isLike ? '1' : '0');
+    formData.set('ispublic', isPublic ? '1' : '0');
     formData.set('secretkey', SECRET_KEY);
+
+    if (date) {
+      formData.set('date', date.toDateString());
+    }
+
+    if (status) {
+      formData.set('status', `${status}`);
+    }
+
+    if (uploadImages && uploadImages.length > 0) {
+      const list = [...uploadImages];
+      for (let i = 0; i < list.length; i++) {
+        const { file, base64Url } = list[i];
+        if (!file) {
+          formData.append(`image[${i}]`, base64ToBlob(`${base64Url}`), `camera_${i}`);
+        } else if (file) {
+          formData.append(`image[${i}]`, file, file.name);
+        }
+      }
+    }
 
     axios
       .post('/api/feed/newfeed', formData, {
@@ -52,7 +102,7 @@ export const TextArea: React.FC<TextAreaProps> = (props) => {
         dispatch(setNewFeeds(newFeeds));
       })
       .catch((error) => console.log(error.message));
-  }, [valueInput, moduleId, recordId, dispatch, feeds, status]);
+  }, [valueInput, moduleId, recordId, dispatch, feeds, status, uploadImages, isLike, isPublic, date]);
 
   const onUploadImages = useCallback(
     (files: FileList) => {
@@ -177,19 +227,97 @@ export const TextArea: React.FC<TextAreaProps> = (props) => {
               </svg>
             </button>
 
-            <button className="col-span-1 hover:bg-indigo-50 duration-300 rounded w-10 h-10 flex justify-center items-center text-gray-500">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-              </svg>
-            </button>
+            <div className="relative inline-block text-left">
+              <div>
+                <button
+                  onClick={() => setShowLikePublic(!showLikePublic)}
+                  className={clsx({
+                    'col-span-1 duration-300 rounded w-10 h-10 flex justify-center items-center text-gray-500': true,
+                    'bg-indigo-50': showLikePublic,
+                    'hover:bg-indigo-50': !showLikePublic,
+                  })}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* <!--
+    Dropdown menu, show/hide based on menu state.
+
+    Entering: "transition ease-out duration-100"
+      From: "transform opacity-0 scale-95"
+      To: "transform opacity-100 scale-100"
+    Leaving: "transition ease-in duration-75"
+      From: "transform opacity-100 scale-100"
+      To: "transform opacity-0 scale-95"
+  --> */}
+              {showLikePublic && (
+                <div
+                  className="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                  role="menu"
+                  aria-orientation="vertical"
+                  aria-labelledby="menu-button"
+                >
+                  <div>
+                    {/* <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" --> */}
+                    <div
+                      onClick={() => {
+                        setIsLike(!isLike);
+                        setShowLikePublic(false);
+                      }}
+                      className="px-6 py-2.5 flex items-center justify-between cursor-pointer hover:bg-gray-100 duration-300"
+                    >
+                      <span>Like</span>
+                      {isLike && (
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="#12a02a">
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      )}
+                    </div>
+                    <hr />
+                    <div
+                      onClick={() => {
+                        setIsPublic(!isPublic);
+                        setShowLikePublic(false);
+                      }}
+                      className="px-6 py-2.5 flex items-center justify-between cursor-pointer hover:bg-gray-100 duration-300"
+                    >
+                      <span>Public</span>
+                      {isPublic && (
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="#12a02a">
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {showDate && (
             <div className="col-span-1">
               <input
                 placeholder="Date"
-                className="appearance-none block w-full text-gray-700 border border-gray-300 rounded py-1.5 px-3 leading-tight focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-1"
-                type="date"
+                className={clsx({
+                  'block w-full text-gray-700 border border-gray-300 rounded px-3 leading-tight focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-1':
+                    true,
+                  'py-1.5': datePickerType === 'date',
+                  'placeholder-gray-500 py-2': datePickerType === 'text',
+                })}
+                type={datePickerType}
+                onFocus={() => setDatePickerType('date')}
+                onChange={(e) => setDate(dayjs(e.target.value, 'YYYY-MM-DD').toDate())}
               />
             </div>
           )}
