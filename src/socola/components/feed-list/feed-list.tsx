@@ -3,12 +3,15 @@ import React, { useEffect } from 'react';
 import { List } from 'react-content-loader';
 import { useDispatch, useSelector } from 'react-redux';
 import { getFeedsFromApi } from '../../../store/action';
+import { FeedType } from '../../../types/feed';
+import { getProps } from '../../../utils/helper';
 import { FeedItem } from '../feed-item/feed-item';
-import { FeedListProps } from './feed-list.type';
 
-export const FeedList: React.FC<FeedListProps> = ({ moduleId, channelId, recordId }) => {
+export const FeedList: React.FC = () => {
+  const dataProps = useSelector(getProps);
+  const { moduleId, channelId, recordId } = dataProps;
   const dispatch = useDispatch();
-  const feeds = useSelector((state) => get(state, 'feeds'));
+  const feeds: FeedType[] | null = useSelector((state) => get(state, 'feeds'));
 
   useEffect(() => {
     dispatch(getFeedsFromApi(moduleId, recordId, channelId));

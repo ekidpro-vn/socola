@@ -1,2 +1,2 @@
-export * from './socola';
-
+export * from './App';
+export * from './types/socola';

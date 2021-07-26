@@ -1,3 +1,5 @@
+import { State } from '../store/type';
+
 const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
   const byteCharacters = atob(b64Data);
   const byteArrays = [];
@@ -16,10 +18,11 @@ const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
 
 export const base64ToBlob = (base64: string) => {
   const block = base64.split(';');
-  // Get the content type of the image
-  const contentType = block[0].split(':')[1]; // In this case "image/gif"
-  // get the real base64 content of the file
-  const realData = block[1].split(',')[1]; // In this case "R0lGODlhPQBEAPeoAJosM...."
-  // Convert it to a blob to upload
+  const contentType = block[0].split(':')[1];
+  const realData = block[1].split(',')[1];
   return b64toBlob(realData, contentType);
+};
+
+export const getProps = (state: State) => {
+  return state.props;
 };

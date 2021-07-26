@@ -10,16 +10,16 @@ import { v4 as uuid } from 'uuid';
 import { SendIcon } from '../../../assets/send-icon';
 import { SECRET_KEY } from '../../../config';
 import { removeAllUploadImage, removeUploadImage, setNewFeeds, setNewUploadImage } from '../../../store/action';
-import { UploadImage } from '../../../store/reducer';
+import { UploadImage } from '../../../store/type';
 import { FeedType } from '../../../types/feed';
-import { base64ToBlob } from '../../../utils/helper';
+import { base64ToBlob, getProps } from '../../../utils/helper';
 import { Camera } from '../camera';
 import { optionsStatus } from './text-area.data';
 import { TextAreaStyle } from './text-area.style';
-import { TextAreaProps } from './text-area.type';
 
-export const TextArea: React.FC<TextAreaProps> = (props) => {
-  const { channelId, showDate, showStatus, statusOption, moduleId, recordId } = props;
+export const TextArea: React.FC = () => {
+  const dataProps = useSelector(getProps);
+  const { channelId, showDate, showStatus, statusOption, moduleId, recordId } = dataProps;
   const [valueInput, setValueInput] = useState<string>('');
   const dispatch = useDispatch();
   const feeds: FeedType[] | null = useSelector((state) => get(state, 'feeds'));
@@ -36,10 +36,14 @@ export const TextArea: React.FC<TextAreaProps> = (props) => {
     const formData = new FormData();
     formData.set('moduleid', moduleId);
     formData.set('recordid', recordId);
-    formData.set('content', valueInput);
+    formData.set('content', valueInput.trim());
     formData.set('islike', isLike ? '1' : '0');
     formData.set('ispublic', isPublic ? '1' : '0');
     formData.set('secretkey', SECRET_KEY);
+
+    if (channelId) {
+      formData.set('channelid', channelId);
+    }
 
     if (date) {
       formData.set('date', date.toDateString());
@@ -83,7 +87,7 @@ export const TextArea: React.FC<TextAreaProps> = (props) => {
         dispatch(setNewFeeds(newFeeds));
       })
       .catch((error) => console.log(error.message));
-  }, [valueInput, moduleId, recordId, dispatch, feeds, status, uploadImages, isLike, isPublic, date]);
+  }, [valueInput, moduleId, recordId, dispatch, feeds, status, uploadImages, isLike, isPublic, date, channelId]);
 
   const onUploadImages = useCallback(
     (files: FileList) => {

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Dispatch } from 'react';
 import { FeedType } from '../types/feed';
-import { UploadImage } from './reducer';
+import { SetProps, UploadImage } from './type';
 
 export const ACTION_GET_FEEDS_SUCCESS = 'ACTION_GET_FEEDS_SUCCESS';
 export const ACTION_GET_FEEDS_ERROR = 'ACTION_GET_FEEDS_ERROR';
@@ -9,6 +9,7 @@ export const ACTION_SET_NEW_FEEDS = 'ACTION_SET_NEW_FEEDS';
 export const ACTION_SET_NEW_UPLOAD_IMAGE = 'ACTION_SET_NEW_UPLOAD_IMAGE';
 export const ACTION_REMOVE_UPLOAD_IMAGE = 'ACTION_REMOVE_UPLOAD_IMAGE';
 export const ACTION_REMOVE_ALL_UPLOAD_IMAGE = 'ACTION_REMOVE_ALL_UPLOAD_IMAGE';
+export const ACTION_SET_PROPS = 'ACTION_SET_PROPS';
 
 const getFeedsFromApiSuccess = (data: FeedType[]) => {
   return <const>{
@@ -72,6 +73,13 @@ export const removeAllUploadImage = () => {
   return {
     type: ACTION_REMOVE_ALL_UPLOAD_IMAGE,
     payload: { data: null },
+  };
+};
+
+export const setProps = (data: SetProps) => {
+  return {
+    type: ACTION_SET_PROPS,
+    payload: { data },
   };
 };
 
