@@ -53,10 +53,10 @@ export const FeedItemMoreAction: React.FC<{ ID: number; onTurnOnEditMode: () => 
           </svg>
         </button>
         {showFeedActions && (
-          <div className="wrapper-tooltip-bottom">
-            <div className="z-20 absolute transition duration-300 ease-in-out shadow-lg rounded left-0 tooltip-bottom">
+          <div className="wrapper-tooltip-more-action">
+            <div className="z-20 absolute transition duration-300 ease-in-out shadow-lg rounded left-0 tooltip-more-action">
               <svg
-                className="absolute h-full arrow-bottom"
+                className="absolute h-full arrow-more-action"
                 width="9px"
                 height="16px"
                 viewBox="0 0 9 16"
@@ -65,7 +65,7 @@ export const FeedItemMoreAction: React.FC<{ ID: number; onTurnOnEditMode: () => 
                 xmlnsXlink="http://www.w3.org/1999/xlink"
               >
                 <g id="Page-1" stroke="none" strokeWidth={1} fill="none" fillRule="evenodd">
-                  <g id="Tooltips-" transform="translate(-874.000000, -1029.000000)" fill="#f6f6f6">
+                  <g id="Tooltips-" transform="translate(-874.000000, -1029.000000)" fill="#fff">
                     <g id="Group-3-Copy-16" transform="translate(850.000000, 975.000000)">
                       <g id="Group-2" transform="translate(24.000000, 0.000000)">
                         <polygon
@@ -97,6 +97,7 @@ export const FeedItemMoreAction: React.FC<{ ID: number; onTurnOnEditMode: () => 
                   </svg>
                   <span className="ml-2 text-gray-700">Edit comment</span>
                 </button>
+                <hr />
                 <button
                   onClick={onDeleteFeed}
                   className="flex items-center w-full text-gray-500 px-4 py-2 duration-300 hover:bg-indigo-50"
