@@ -193,13 +193,13 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
                   <div className="ml-4 w-20">
                     <button
                       onClick={onEditFeed}
-                      className="block w-full text-center font-semibold bg-blue-500 duration-300 rounded-md text-white hover:bg-blue-600 px-3 py-1"
+                      className="block w-full text-center bg-blue-500 duration-300 rounded-md text-white hover:bg-blue-600 px-3 py-1"
                     >
                       Save
                     </button>
                     <button
                       onClick={() => setEditMode(false)}
-                      className="block w-full text-center font-semibold text-white bg-red-500 duration-300 rounded-md border hover:bg-red-600 px-3 py-1 mt-2.5"
+                      className="block w-full text-center bg-white duration-300 rounded-md border px-3 py-1 mt-2.5"
                     >
                       Cancel
                     </button>

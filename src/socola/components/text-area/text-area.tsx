@@ -172,7 +172,7 @@ export const TextArea: React.FC = () => {
         </div>
       )}
       {/* Control */}
-      <div className="sm:flex sm:items-center sm:justify-between mt-5">
+      <div className="mt-5">
         <div className="sm:flex sm:items-center w-full">
           <div className="flex items-center sm:mr-3 justify-center">
             <button className="hover:bg-indigo-50 duration-300 rounded w-10 h-10 text-gray-500 mr-2">
@@ -278,9 +278,10 @@ export const TextArea: React.FC = () => {
                 </div>
               )}
             </div>
-
+          </div>
+          <div className="sm:flex sm:items-center mt-4 sm:mt-0">
             {showDate && (
-              <div className="mr-4 w-44">
+              <div className="sm:w-48 sm:mr-4 mb-3 sm:mb-0">
                 <input
                   placeholder="Date"
                   className={clsx({
@@ -295,28 +296,25 @@ export const TextArea: React.FC = () => {
                 />
               </div>
             )}
-          </div>
-          <div className="flex items-center justify-between w-full mt-4 sm:mt-0">
             {showStatus && (
-              <div className="w-44">
+              <div className="sm:w-48">
                 <Select options={statusOption || optionsStatus} placeholder="Status" onChange={(e) => setStatus(e)} />
               </div>
             )}
-
-            <div className="flex justify-end sm:block">
-              <button
-                onClick={onPostValue}
-                className={clsx({
-                  'bg-green-600 text-white px-4 py-2 rounded duration-300 flex items-center justify-center': true,
-                  'opacity-70': !valueInput,
-                  'opacity-100': !!valueInput,
-                })}
-              >
-                <SendIcon className="w-5 h-3.5" />
-                <span className="ml-1 font-semibold">POST</span>
-              </button>
-            </div>
           </div>
+        </div>
+        <div className="flex justify-end mt-3">
+          <button
+            onClick={onPostValue}
+            className={clsx({
+              'bg-green-600 text-white px-4 py-2 rounded duration-300 flex items-center justify-center': true,
+              'opacity-70': !valueInput,
+              'opacity-100': !!valueInput,
+            })}
+          >
+            <SendIcon className="w-5 h-3.5" />
+            <span className="ml-1 font-medium">POST</span>
+          </button>
         </div>
       </div>
 
