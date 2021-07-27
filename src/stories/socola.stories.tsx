@@ -9,7 +9,7 @@ export default {
 } as ComponentMeta<typeof Socola>;
 
 const Template: ComponentStory<typeof Socola> = (args) => (
-  <div className="w-full mx-auto my-10">
+  <div className="w-3/5 mx-auto my-10">
     <Socola {...args} />
   </div>
 );
@@ -17,13 +17,13 @@ const Template: ComponentStory<typeof Socola> = (args) => (
 export const DefaultSocola = Template.bind({});
 DefaultSocola.args = {
   moduleId: 'feedback',
-  socolaToken: 'f748a60cb3980c4009302959d72d7a4f',
+  // socolaToken: 'f748a60cb3980c4009302959d72d7a4f',
   // recordId: '15784',
   recordId: '15803',
   showDate: true,
   showStatus: true,
   // readOnly: true,
-  // socolaToken: '',
+  socolaToken: '',
   userInfo: {
     id: 16820,
     role: 'ADMIN',
