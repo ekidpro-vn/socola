@@ -8,16 +8,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FeedType } from 'types/feed';
 import { SECRET_KEY } from '../../../config';
 import { setNewFeeds } from '../../../store/action';
+import { getProps } from '../../../utils/helper';
 import { FeedItemStyle } from './feed-item.style';
 import { FeedItemMoreAction } from './subs/feed-item-more-action';
 import { FeedItemReply } from './subs/feed-item-reply';
-import { FeedItemSubInfo } from './subs/feed-item-sub-info';
+import { FeedItemSubInfo, FeedItemSubInfoMobile } from './subs/feed-item-sub-info';
 
 dayjs.extend(relativeTime);
 
 export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
+  const dataProps = useSelector(getProps);
+  const { readOnly, userInfo, renderType } = dataProps;
   const [showReplyInput, setShowReplyInput] = useState<boolean>(false);
-  const [valueInput, setValueInput] = useState<string>('');
+  const [valueReplyInput, setValueReplyInput] = useState<string>('');
   const [editMode, setEditMode] = useState<boolean>(false);
   const {
     UserID,
@@ -37,11 +40,13 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
   const dispatch = useDispatch();
   const feeds: FeedType[] | null = useSelector((state) => get(state, 'feeds'));
 
+  const permisionEditFeed = userInfo?.id === Number(UserID) || userInfo?.role === 'ADMIN';
+
   const onReplyComment = useCallback(
     (feedkey: string) => {
       const formData = new FormData();
       formData.set('feedkey', feedkey);
-      formData.set('comment', valueInput);
+      formData.set('comment', valueReplyInput.trim());
 
       axios
         .post('/api/feed/comment', formData, {
@@ -54,7 +59,6 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
           if (!success || response.status > 400) {
             throw new Error(message || 'Reply failed');
           }
-          setValueInput('');
           const newFeeds = feeds.map((item) => {
             if (item.FeedKey === feedkey) {
               item.Comments = Comments;
@@ -65,11 +69,15 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
         })
         .catch((error) => console.log(error.message));
     },
-    [valueInput, dispatch, feeds]
+    [valueReplyInput, dispatch, feeds]
   );
 
   const onLikeComment = useCallback(
     (feedkey: string) => {
+      if (readOnly) {
+        return;
+      }
+
       const formData = new FormData();
       formData.set('feedkey', feedkey);
       axios
@@ -94,7 +102,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
         })
         .catch((error) => console.log(error.message));
     },
-    [dispatch, feeds]
+    [dispatch, feeds, readOnly]
   );
 
   const onEditFeed = useCallback(() => {
@@ -119,9 +127,27 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
       .catch((error) => console.log(error.message));
   }, [valueInputFeed, ID, dispatch, feeds]);
 
+  if (renderType === 'minimum') {
+    return (
+      <div>
+        {Content.Content.split('<br />').map((text, index) => {
+          const key = `${text}_${index}`;
+          return (
+            <React.Fragment key={key}>
+              <li>{text}</li>
+            </React.Fragment>
+          );
+        })}
+      </div>
+    );
+  }
+
   return (
     <FeedItemStyle className="mt-10">
-      <div className="flex items-start">
+      <div className="sm:hidden">
+        <FeedItemSubInfoMobile date={Content.date} status={Content.status} />
+      </div>
+      <div className="flex items-start justify-between">
         <img
           src={`http://socola.apax.online/api/avatar/view?cid=ekidpro&uid=${UserID}`}
           className="w-10 h-10 rounded-full"
@@ -182,7 +208,9 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
               </div>
             </div>
 
-            {!editMode && <FeedItemMoreAction ID={ID} onTurnOnEditMode={() => setEditMode(true)} />}
+            {!editMode && !readOnly && permisionEditFeed && (
+              <FeedItemMoreAction ID={ID} onTurnOnEditMode={() => setEditMode(true)} />
+            )}
           </div>
           <div className="flex items-center mt-1">
             {isLike ? (
@@ -192,8 +220,9 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
                   onClick={() => onLikeComment(FeedKey)}
                   className={clsx({
                     'mr-3': true,
-                    'text-gray-500 duration-300 hover:text-blue-500': !isYouLiked,
-                    'text-blue-500': isYouLiked,
+                    'text-gray-500 duration-300 hover:text-blue-500': !isYouLiked && !readOnly,
+                    'text-blue-500': isYouLiked && !readOnly,
+                    'text-gray-500': readOnly,
                   })}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -204,7 +233,15 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
             ) : null}
 
             {CommentCount > 0 && <span className="block mr-0.5">{CommentCount}</span>}
-            <button className="mr-3 text-gray-500" onClick={() => setShowReplyInput(!showReplyInput)}>
+            <button
+              className="mr-3 text-gray-500"
+              onClick={() => {
+                if (readOnly) {
+                  return;
+                }
+                setShowReplyInput(!showReplyInput);
+              }}
+            >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path
                   fillRule="evenodd"
@@ -219,16 +256,19 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
           {showReplyInput && (
             <div className="mt-2">
               <textarea
-                onKeyDown={(e) => {
+                onKeyUp={(e) => {
                   if (e.code === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    setValueReplyInput('');
                     onReplyComment(FeedKey);
+                    return false;
                   }
                 }}
-                value={valueInput}
+                value={valueReplyInput}
                 placeholder="Reply to comment..."
                 rows={1}
                 autoFocus
-                onChange={(e) => setValueInput(e.target.value)}
+                onChange={(e) => setValueReplyInput(e.target.value)}
                 className="w-full flex-1 flex items-center rounded-xl py-1.5 overflow-hidden border px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:border-blue-600 focus:outline-none"
               />
             </div>
@@ -236,7 +276,9 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
 
           <FeedItemReply Comments={Comments} feedkey={FeedKey} />
         </div>
-        <FeedItemSubInfo date={Content.date} status={Content.status} />
+        <div className="hidden sm:block">
+          <FeedItemSubInfo date={Content.date} status={Content.status} />
+        </div>
       </div>
     </FeedItemStyle>
   );

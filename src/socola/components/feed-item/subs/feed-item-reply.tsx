@@ -6,6 +6,7 @@ import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FeedType, SubFeedType } from 'types/feed';
 import { setNewFeeds } from '../../../../store/action';
+import { getProps } from '../../../../utils/helper';
 
 export const FeedItemReply: React.FC<{ Comments: Record<string, SubFeedType> | []; feedkey: string }> = ({
   Comments,
@@ -13,9 +14,15 @@ export const FeedItemReply: React.FC<{ Comments: Record<string, SubFeedType> | [
 }) => {
   const dispatch = useDispatch();
   const feeds: FeedType[] | null = useSelector((state) => get(state, 'feeds'));
+  const dataProps = useSelector(getProps);
+  const { readOnly } = dataProps;
 
   const onLikeComment = useCallback(
     (commentkey: string) => {
+      if (readOnly) {
+        return;
+      }
+
       const formData = new FormData();
       formData.set('commentkey', commentkey);
       axios
@@ -46,15 +53,28 @@ export const FeedItemReply: React.FC<{ Comments: Record<string, SubFeedType> | [
         })
         .catch((error) => console.log(error.message));
     },
-    [dispatch, feeds, feedkey]
+    [dispatch, feeds, feedkey, readOnly]
   );
+
+  // const onViewMore = () => {
+  //   axios
+  //     .get('/api/feed/getcomments', {
+  //       params: {
+  //         feedkey,
+  //       },
+  //     })
+  //     .then((response) => {
+  //       console.log('ducnh');
+  //     })
+  //     .catch((error) => console.log(error.message));
+  // };
 
   if (!Comments || Comments.length === 0) {
     return null;
   }
 
   return (
-    <div>
+    <div className="sm:pr-10">
       {Object.entries(Comments).map((item, index) => {
         const { UserFullName, Comment, PostedAt, UserID, isYouLiked, CommentKey, LikesCount } = item[1];
 
@@ -85,8 +105,9 @@ export const FeedItemReply: React.FC<{ Comments: Record<string, SubFeedType> | [
                 <button
                   onClick={() => onLikeComment(CommentKey)}
                   className={clsx({
-                    'text-gray-500 duration-300 hover:text-blue-500': !isYouLiked,
-                    'text-blue-500': isYouLiked,
+                    'text-gray-500 duration-300 hover:text-blue-500': !isYouLiked && !readOnly,
+                    'text-blue-500': isYouLiked && !readOnly,
+                    'text-gray-500': readOnly,
                   })}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -99,6 +120,9 @@ export const FeedItemReply: React.FC<{ Comments: Record<string, SubFeedType> | [
           </div>
         );
       })}
+      {/* <button className="block" onClick={onViewMore}>
+        View more
+      </button> */}
     </div>
   );
 };

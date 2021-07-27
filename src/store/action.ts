@@ -33,6 +33,8 @@ export const getFeedsFromApi = (moduleId?: string, recordId?: string, channelId?
           moduleid: moduleId,
           recordid: recordId,
           channelid: channelId,
+          page: 1,
+          limit: 10,
         },
       })
       .then((response) => {

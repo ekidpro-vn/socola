@@ -15,6 +15,15 @@ export const FeedItemStyle = styled.div`
     }
   }
 
+  @media (max-width: 991px) {
+    .one-primary-feed {
+      .btn-more-option-feed-hover {
+        opacity: 100%;
+        visibility: visible;
+      }
+    }
+  }
+
   .w-fit-content {
     width: fit-content;
   }
