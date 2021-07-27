@@ -17,7 +17,10 @@ export const initialState: State = {
     showStatus: true,
     readOnly: false,
     renderType: 'social',
-    userRole: '',
+    userInfo: {
+      id: 0,
+      role: '',
+    },
   },
 };
 

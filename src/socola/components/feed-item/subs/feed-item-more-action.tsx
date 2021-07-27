@@ -38,7 +38,7 @@ export const FeedItemMoreAction: React.FC<{ ID: number; onTurnOnEditMode: () => 
 
   return (
     <div className="feed-actions flex-col md:flex-row flex items-center md:justify-center flex-wrap">
-      <div className="relative mt-20 md:mt-0">
+      <div className="relative">
         <button
           onClick={() => setShowFeedActions(!showFeedActions)}
           className={clsx({

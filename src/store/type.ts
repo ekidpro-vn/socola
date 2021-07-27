@@ -17,7 +17,10 @@ export interface SetProps {
   showStatus?: boolean;
   readOnly?: boolean;
   renderType?: 'minimum' | 'social' | 'note';
-  userRole?: string;
+  userInfo?: {
+    id: number;
+    role: string;
+  };
 }
 
 export interface State {

@@ -17,7 +17,9 @@ export const Socola: React.FC<SocolaProps> = (props) => {
   return (
     <div>
       {!props.readOnly && <TextArea />}
-      <FeedList />
+      <div className="px-2">
+        <FeedList />
+      </div>
     </div>
   );
 };

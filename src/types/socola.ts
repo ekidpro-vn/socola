@@ -13,5 +13,8 @@ export interface SocolaProps {
   showStatus?: boolean;
   readOnly?: boolean;
   renderType?: 'minimum' | 'social' | 'note';
-  userRole?: string;
+  userInfo?: {
+    id: number;
+    role: string;
+  };
 }

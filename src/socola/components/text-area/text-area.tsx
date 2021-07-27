@@ -172,10 +172,10 @@ export const TextArea: React.FC = () => {
         </div>
       )}
       {/* Control */}
-      <div className="grid grid-cols-2 mt-5">
-        <div className="col-span-1 grid grid-cols-3 gap-x-5">
-          <div className="col-span-1 grid grid-cols-3 gap-x-3">
-            <button className="col-span-1 hover:bg-indigo-50 duration-300 rounded w-10 h-10 text-gray-500">
+      <div className="sm:flex sm:items-center sm:justify-between mt-5">
+        <div className="sm:flex sm:items-center w-full">
+          <div className="flex items-center sm:mr-3 justify-center">
+            <button className="hover:bg-indigo-50 duration-300 rounded w-10 h-10 text-gray-500 mr-2">
               <label htmlFor="file-input" className="w-full h-full flex justify-center items-center cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path
@@ -201,7 +201,7 @@ export const TextArea: React.FC = () => {
 
             <button
               onClick={() => setShowModalCamera(true)}
-              className="col-span-1 hover:bg-indigo-50 duration-300 rounded w-10 h-10 flex justify-center items-center text-gray-500"
+              className="hover:bg-indigo-50 duration-300 rounded w-10 h-10 flex justify-center items-center text-gray-500 mr-2"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path
@@ -212,12 +212,12 @@ export const TextArea: React.FC = () => {
               </svg>
             </button>
 
-            <div className="relative inline-block text-left">
+            <div className="relative inline-block text-left mr-3 z-10">
               <div>
                 <button
                   onClick={() => setShowLikePublic(!showLikePublic)}
                   className={clsx({
-                    'col-span-1 duration-300 rounded w-10 h-10 flex justify-center items-center text-gray-500': true,
+                    'duration-300 rounded w-10 h-10 flex justify-center items-center text-gray-500': true,
                     'bg-indigo-50': showLikePublic,
                     'hover:bg-indigo-50': !showLikePublic,
                   })}
@@ -228,19 +228,9 @@ export const TextArea: React.FC = () => {
                 </button>
               </div>
 
-              {/* <!--
-    Dropdown menu, show/hide based on menu state.
-
-    Entering: "transition ease-out duration-100"
-      From: "transform opacity-0 scale-95"
-      To: "transform opacity-100 scale-100"
-    Leaving: "transition ease-in duration-75"
-      From: "transform opacity-100 scale-100"
-      To: "transform opacity-0 scale-95"
-  --> */}
               {showLikePublic && (
                 <div
-                  className="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                  className="origin-top-right absolute z-10 right-0 mt-2 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
                   role="menu"
                   aria-orientation="vertical"
                   aria-labelledby="menu-button"
@@ -288,44 +278,45 @@ export const TextArea: React.FC = () => {
                 </div>
               )}
             </div>
+
+            {showDate && (
+              <div className="mr-4 w-44">
+                <input
+                  placeholder="Date"
+                  className={clsx({
+                    'block w-full text-gray-700 border border-gray-300 rounded px-3 leading-tight focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-1':
+                      true,
+                    'py-1.5': datePickerType === 'date',
+                    'placeholder-gray-500 py-2': datePickerType === 'text',
+                  })}
+                  type={datePickerType}
+                  onFocus={() => setDatePickerType('date')}
+                  onChange={(e) => setDate(dayjs(e.target.value, 'YYYY-MM-DD').toDate())}
+                />
+              </div>
+            )}
           </div>
+          <div className="flex items-center justify-between w-full mt-4 sm:mt-0">
+            {showStatus && (
+              <div className="w-44">
+                <Select options={statusOption || optionsStatus} placeholder="Status" onChange={(e) => setStatus(e)} />
+              </div>
+            )}
 
-          {showDate && (
-            <div className="col-span-1">
-              <input
-                placeholder="Date"
+            <div className="flex justify-end sm:block">
+              <button
+                onClick={onPostValue}
                 className={clsx({
-                  'block w-full text-gray-700 border border-gray-300 rounded px-3 leading-tight focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-1':
-                    true,
-                  'py-1.5': datePickerType === 'date',
-                  'placeholder-gray-500 py-2': datePickerType === 'text',
+                  'bg-green-600 text-white px-4 py-2 rounded duration-300 flex items-center justify-center': true,
+                  'opacity-70': !valueInput,
+                  'opacity-100': !!valueInput,
                 })}
-                type={datePickerType}
-                onFocus={() => setDatePickerType('date')}
-                onChange={(e) => setDate(dayjs(e.target.value, 'YYYY-MM-DD').toDate())}
-              />
+              >
+                <SendIcon className="w-5 h-3.5" />
+                <span className="ml-1 font-semibold">POST</span>
+              </button>
             </div>
-          )}
-
-          {showStatus && (
-            <div className="col-span-1">
-              <Select options={statusOption || optionsStatus} placeholder="Status" onChange={(e) => setStatus(e)} />
-            </div>
-          )}
-        </div>
-
-        <div className="col-span-1 flex items-center justify-end">
-          <button
-            onClick={onPostValue}
-            className={clsx({
-              'bg-green-600 text-white px-4 py-2 rounded duration-300 flex items-center justify-center': true,
-              'opacity-70': !valueInput,
-              'opacity-100': !!valueInput,
-            })}
-          >
-            <SendIcon className="w-5 h-3.5" />
-            <span className="ml-1 font-semibold">POST</span>
-          </button>
+          </div>
         </div>
       </div>
 
