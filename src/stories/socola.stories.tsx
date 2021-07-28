@@ -17,7 +17,7 @@ const Template: ComponentStory<typeof Socola> = (args) => (
 export const DefaultSocola = Template.bind({});
 DefaultSocola.args = {
   moduleId: 'feedback',
-  // socolaToken: 'f748a60cb3980c4009302959d72d7a4f',
+  socolaToken: 'f748a60cb3980c4009302959d72d7a4f',
   recordId: '15784',
   // recordId: '15803',
   showDate: true,
