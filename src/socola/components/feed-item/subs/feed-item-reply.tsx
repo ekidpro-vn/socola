@@ -61,6 +61,8 @@ export const FeedItemReply: React.FC<{ Comments: Record<string, SubFeedType> | [
   //     .get('/api/feed/getcomments', {
   //       params: {
   //         feedkey,
+  //         page: 1,
+  //         limit: 10,
   //       },
   //     })
   //     .then((response) => {
