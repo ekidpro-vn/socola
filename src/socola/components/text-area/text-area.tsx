@@ -95,7 +95,7 @@ export const TextArea: React.FC = () => {
         toast.error(error.message, { autoClose: false });
         setLoading(false);
       });
-  }, [valueInput, moduleId, recordId, dispatch, feeds, status, uploadImages, isPublic, date, channelId]);
+  }, [valueInput, moduleId, recordId, dispatch, feeds, status, uploadImages, isPublic, date, channelId, loading]);
 
   const onUploadImages = useCallback(
     (files: FileList) => {
@@ -252,6 +252,7 @@ export const TextArea: React.FC = () => {
                 <Select
                   options={statusOption || optionsStatus}
                   isMulti
+                  value={status}
                   placeholder="Tags"
                   onChange={(e) => setStatus(getDataDropdown(e))}
                 />

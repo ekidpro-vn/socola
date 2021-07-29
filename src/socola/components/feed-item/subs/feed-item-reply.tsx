@@ -86,7 +86,10 @@ export const FeedItemReply: React.FC<{
         dispatch(setNewFeeds(newFeeds));
         setPageSeeMore(pageSeeMore + 1);
       })
-      .catch((error) => toast.error(error.message, { autoClose: false }));
+      .catch((error) => {
+        toast.error(error.message, { autoClose: false });
+        setLoading(false);
+      });
   }, [feedkey, dispatch, feeds, pageSeeMore]);
 
   if (!Comments || Comments.length === 0) {
