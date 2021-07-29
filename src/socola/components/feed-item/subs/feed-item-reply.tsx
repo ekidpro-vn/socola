@@ -1,12 +1,14 @@
 import axios from 'axios';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { SubFeedType } from 'types/feed';
 import { setNewFeeds } from '../../../../store/action';
 import { getFeeds, getProps } from '../../../../utils/helper';
+
+const LIMIT = 5;
 
 export const FeedItemReply: React.FC<{
   Comments: Record<string, SubFeedType> | [];
@@ -17,6 +19,7 @@ export const FeedItemReply: React.FC<{
   const feeds = useSelector(getFeeds);
   const dataProps = useSelector(getProps);
   const { readOnly } = dataProps;
+  const [pageSeeMore, setPageSeeMore] = useState<number>(1);
 
   const onLikeComment = useCallback(
     (commentkey: string) => {
@@ -57,20 +60,31 @@ export const FeedItemReply: React.FC<{
     [dispatch, feeds, feedkey, readOnly]
   );
 
-  const onViewMore = () => {
+  const onViewMore = useCallback(() => {
     axios
       .get('/api/feed/getcomments', {
         params: {
           feedkey,
-          page: 1,
-          limit: 4,
+          page: pageSeeMore + 1,
+          limit: LIMIT,
         },
       })
       .then((response) => {
-        console.log('ducnh');
+        const { success, message, Comments } = response.data;
+        if (!success || response.status > 400) {
+          throw new Error(message || 'Reply failed');
+        }
+        const newFeeds = feeds.map((item) => {
+          if (item.FeedKey === feedkey) {
+            item.Comments = { ...item.Comments, ...Comments };
+          }
+          return item;
+        });
+        dispatch(setNewFeeds(newFeeds));
+        setPageSeeMore(pageSeeMore + 1);
       })
       .catch((error) => toast.error(error.message, { autoClose: false }));
-  };
+  }, [feedkey, dispatch, feeds, pageSeeMore]);
 
   if (!Comments || Comments.length === 0) {
     return null;
@@ -123,9 +137,9 @@ export const FeedItemReply: React.FC<{
           </div>
         );
       })}
-      {CommentCount > 5 && (
+      {CommentCount > 5 && LIMIT * pageSeeMore < CommentCount && (
         <button
-          className="flex items-center rounded-md mt-3 ml-3 text-sm font-medium duration-300 hover:underline"
+          className="flex items-center rounded-md mt-4 ml-3 text-sm font-medium duration-300 hover:underline"
           onClick={onViewMore}
         >
           <span className="text-gray-600">

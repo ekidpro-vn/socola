@@ -45,6 +45,9 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
 
   const onReplyComment = useCallback(
     (feedkey: string) => {
+      if (!valueReplyInput || valueReplyInput.trim().length === 0) {
+        return;
+      }
       const formData = new FormData();
       formData.set('feedkey', feedkey);
       formData.set('comment', valueReplyInput.trim());
