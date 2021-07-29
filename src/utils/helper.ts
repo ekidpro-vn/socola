@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { OptionsType } from 'react-select';
 import { OptionProps } from 'types/socola';
 import { State } from '../store/type';
@@ -35,6 +36,20 @@ export const getPaginationFeed = (state: State) => {
 
 export const getFeeds = (state: State) => {
   return state.feeds;
+};
+
+export const getDisplayTime = (timestamp: number) => {
+  // milisecond
+  const today = dayjs().startOf('day').valueOf();
+  const day = dayjs(timestamp).format('DD/MM/YYYY');
+  const hour = dayjs(timestamp).format('HH:mm');
+  if (timestamp > today) {
+    return `Today at ${hour}`;
+  }
+  if (timestamp > today - 86400000) {
+    return `Yesterday at ${hour}`;
+  }
+  return `${day} at ${hour}`;
 };
 
 const isSingleElement = (data: OptionsType<OptionProps> | OptionProps | null): data is OptionProps => {

@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
 import { v4 as uuid } from 'uuid';
+import { LoadingIcon } from '../../../assets/loading';
 import { SendIcon } from '../../../assets/send-icon';
 import { SECRET_KEY } from '../../../config';
 import { removeAllUploadImage, removeUploadImage, setNewFeeds, setNewUploadImage } from '../../../store/action';
@@ -29,11 +30,13 @@ export const TextArea: React.FC = () => {
   const [isPublic, setIsPublic] = useState<boolean>(true);
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [datePickerType, setDatePickerType] = useState<'text' | 'date'>('text');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const onPostValue = useCallback(() => {
-    if (!valueInput) {
+    if (!valueInput || loading) {
       return;
     }
+    setLoading(true);
     const formData = new FormData();
     formData.set('moduleid', moduleId);
     formData.set('recordid', recordId);
@@ -78,6 +81,7 @@ export const TextArea: React.FC = () => {
         if (!success || response.status > 400) {
           throw new Error(message || 'Post failed');
         }
+        setLoading(false);
         setValueInput('');
         setIsPublic(true);
         setDatePickerType('text');
@@ -87,8 +91,11 @@ export const TextArea: React.FC = () => {
         const newFeeds = [feeddata, ...feeds];
         dispatch(setNewFeeds(newFeeds));
       })
-      .catch((error) => toast.error(error.message, { autoClose: false }));
-  }, [valueInput, moduleId, recordId, dispatch, feeds, status, uploadImages, isPublic, date, channelId]);
+      .catch((error) => {
+        toast.error(error.message, { autoClose: false });
+        setLoading(false);
+      });
+  }, [valueInput, moduleId, recordId, dispatch, feeds, status, uploadImages, isPublic, date, channelId, loading]);
 
   const onUploadImages = useCallback(
     (files: FileList) => {
@@ -245,6 +252,7 @@ export const TextArea: React.FC = () => {
                 <Select
                   options={statusOption || optionsStatus}
                   isMulti
+                  value={status}
                   placeholder="Tags"
                   onChange={(e) => setStatus(getDataDropdown(e))}
                 />
@@ -259,9 +267,10 @@ export const TextArea: React.FC = () => {
               'bg-green-600 text-white px-4 py-2 rounded duration-300 flex items-center justify-center': true,
               'opacity-70': !valueInput,
               'opacity-100': !!valueInput,
+              'cursor-not-allowed': loading,
             })}
           >
-            <SendIcon className="w-5 h-3.5" />
+            {loading ? <LoadingIcon className="w-4 h-4" /> : <SendIcon className="w-5 h-3.5" />}
             <span className="ml-1 font-medium">POST</span>
           </button>
         </div>

@@ -1,12 +1,12 @@
 import axios from 'axios';
 import clsx from 'clsx';
-import dayjs from 'dayjs';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { SubFeedType } from 'types/feed';
+import { LoadingSeemMoreIcon } from '../../../../assets/loading-see-more';
 import { setNewFeeds } from '../../../../store/action';
-import { getFeeds, getProps } from '../../../../utils/helper';
+import { getDisplayTime, getFeeds, getProps } from '../../../../utils/helper';
 
 const LIMIT = 5;
 
@@ -16,6 +16,7 @@ export const FeedItemReply: React.FC<{
   CommentCount: number;
 }> = ({ Comments, feedkey, CommentCount }) => {
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState<boolean>(false);
   const feeds = useSelector(getFeeds);
   const dataProps = useSelector(getProps);
   const { readOnly } = dataProps;
@@ -61,6 +62,7 @@ export const FeedItemReply: React.FC<{
   );
 
   const onViewMore = useCallback(() => {
+    setLoading(true);
     axios
       .get('/api/feed/getcomments', {
         params: {
@@ -74,6 +76,7 @@ export const FeedItemReply: React.FC<{
         if (!success || response.status > 400) {
           throw new Error(message || 'Reply failed');
         }
+        setLoading(false);
         const newFeeds = feeds.map((item) => {
           if (item.FeedKey === feedkey) {
             item.Comments = { ...item.Comments, ...Comments };
@@ -83,7 +86,10 @@ export const FeedItemReply: React.FC<{
         dispatch(setNewFeeds(newFeeds));
         setPageSeeMore(pageSeeMore + 1);
       })
-      .catch((error) => toast.error(error.message, { autoClose: false }));
+      .catch((error) => {
+        toast.error(error.message, { autoClose: false });
+        setLoading(false);
+      });
   }, [feedkey, dispatch, feeds, pageSeeMore]);
 
   if (!Comments || Comments.length === 0) {
@@ -131,7 +137,7 @@ export const FeedItemReply: React.FC<{
                     <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
                   </svg>
                 </button>
-                <span className="block opacity-50 ml-2 text-reply">{dayjs(PostedAt * 1000).fromNow()}</span>
+                <span className="block opacity-70 ml-2 text-sm">{getDisplayTime(PostedAt * 1000)}</span>
               </div>
             </div>
           </div>
@@ -156,7 +162,10 @@ export const FeedItemReply: React.FC<{
               />
             </svg>
           </span>
-          <span className="ml-2 text-gray-600">See other feedback</span>
+          <div className="ml-2 flex items-center">
+            <span className="text-gray-600 block mr-2">See other feedback</span>
+            {loading && <LoadingSeemMoreIcon className="w-5 h-5" />}
+          </div>
         </button>
       )}
     </div>

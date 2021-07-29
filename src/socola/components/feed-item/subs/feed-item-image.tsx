@@ -8,18 +8,18 @@ export const FeedItemImage: React.FC<{ Image: { name: string; url: string }[] }>
   const images = Image.map((item) => item.url);
 
   return (
-    <div className="grid grid-cols-3 gap-6 mt-1.5">
+    <div className="mt-1.5">
       {Image.map((item, index) => {
         return (
           <button
             key={item.url}
-            className="col-span-1"
+            className="col-span-1 float-left mr-6 h-28 w-48"
             onClick={() => {
               setShowLightbox(true);
               setPhotoIndex(index);
             }}
           >
-            <img src={item.url} alt="image" className="h-28 w-full rounded-xl shadow object-cover" />
+            <img src={item.url} alt="image" className="h-full w-full rounded-xl shadow object-cover" />
           </button>
         );
       })}

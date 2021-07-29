@@ -1,7 +1,6 @@
 import axios from 'axios';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
 import { upperFirst } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,13 +8,11 @@ import { toast } from 'react-toastify';
 import { FeedType } from 'types/feed';
 import { SECRET_KEY } from '../../../config';
 import { setNewFeeds } from '../../../store/action';
-import { getFeeds, getProps } from '../../../utils/helper';
+import { getDisplayTime, getFeeds, getProps } from '../../../utils/helper';
 import { FeedItemStyle } from './feed-item.style';
 import { FeedItemImage } from './subs/feed-item-image';
 import { FeedItemMoreAction } from './subs/feed-item-more-action';
 import { FeedItemReply } from './subs/feed-item-reply';
-
-dayjs.extend(relativeTime);
 
 export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
   const dataProps = useSelector(getProps);
@@ -254,9 +251,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
                 />
               </svg>
             </button>
-            <span className="block opacity-50">
-              {dayjs(PostedAt * 1000).format('DD/MM/YYYY')} ({dayjs(PostedAt * 1000).fromNow()})
-            </span>
+            <span className="block opacity-70 text-sm">{getDisplayTime(PostedAt * 1000)}</span>
             <div className="flex items-center ml-3">
               {Content.date && (
                 <div className="flex px-2 py-0.5 rounded-2xl bg-blue-600 items-center mr-3">
@@ -279,27 +274,33 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
                   <span className="text-sm text-white">{dayjs(Content.date).format('DD/MM/YYYY')}</span>
                 </div>
               )}
-              {Content.status && (
-                <div className="flex px-2 py-0.5 rounded-2xl bg-green-600 items-center">
-                  <span className="text-white mr-1">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-3.5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
+              {Content.status &&
+                Content.status.split(',').map((item, index) => {
+                  return (
+                    <div
+                      key={`${item}_${index}`}
+                      className="flex px-2 py-0.5 rounded-2xl bg-green-600 items-center mr-2"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
-                      />
-                    </svg>
-                  </span>
-                  <span className="mr-2 text-sm text-white">{upperFirst(Content.status.toLowerCase())}</span>
-                </div>
-              )}
+                      <span className="text-white mr-1">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-3.5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+                          />
+                        </svg>
+                      </span>
+                      <span className="mr-2 text-sm text-white">{upperFirst(item.toLowerCase())}</span>
+                    </div>
+                  );
+                })}
             </div>
           </div>
 
