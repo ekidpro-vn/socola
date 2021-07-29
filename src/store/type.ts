@@ -23,10 +23,18 @@ export interface SetProps {
   };
 }
 
+export interface PaginationFeed {
+  totalItems: number;
+  totalPages: number;
+  page: number;
+  size: number;
+}
+
 export interface State {
   feeds: FeedType[] | null;
   error?: string;
   loading?: boolean;
   uploadImages: UploadImage[];
   props: SetProps;
+  paginationFeed: PaginationFeed;
 }

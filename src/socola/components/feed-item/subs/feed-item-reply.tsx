@@ -1,13 +1,12 @@
 import axios from 'axios';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
-import get from 'lodash.get';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { FeedType, SubFeedType } from 'types/feed';
+import { SubFeedType } from 'types/feed';
 import { setNewFeeds } from '../../../../store/action';
-import { getProps } from '../../../../utils/helper';
+import { getFeeds, getProps } from '../../../../utils/helper';
 
 export const FeedItemReply: React.FC<{
   Comments: Record<string, SubFeedType> | [];
@@ -15,7 +14,7 @@ export const FeedItemReply: React.FC<{
   CommentCount: number;
 }> = ({ Comments, feedkey, CommentCount }) => {
   const dispatch = useDispatch();
-  const feeds: FeedType[] | null = useSelector((state) => get(state, 'feeds'));
+  const feeds = useSelector(getFeeds);
   const dataProps = useSelector(getProps);
   const { readOnly } = dataProps;
 

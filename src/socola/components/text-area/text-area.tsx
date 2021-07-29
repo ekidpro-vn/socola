@@ -12,8 +12,7 @@ import { SendIcon } from '../../../assets/send-icon';
 import { SECRET_KEY } from '../../../config';
 import { removeAllUploadImage, removeUploadImage, setNewFeeds, setNewUploadImage } from '../../../store/action';
 import { UploadImage } from '../../../store/type';
-import { FeedType } from '../../../types/feed';
-import { base64ToBlob, getDataDropdown, getProps } from '../../../utils/helper';
+import { base64ToBlob, getDataDropdown, getFeeds, getProps } from '../../../utils/helper';
 import { Camera } from '../camera';
 import { optionsStatus } from './text-area.data';
 import { TextAreaStyle } from './text-area.style';
@@ -23,12 +22,10 @@ export const TextArea: React.FC = () => {
   const { channelId, showDate, showStatus, statusOption, moduleId, recordId } = dataProps;
   const [valueInput, setValueInput] = useState<string>('');
   const dispatch = useDispatch();
-  const feeds: FeedType[] | null = useSelector((state) => get(state, 'feeds'));
+  const feeds = useSelector(getFeeds);
   const uploadImages: UploadImage[] | undefined = useSelector((state) => get(state, 'uploadImages'));
   const [status, setStatus] = useState<{ value: string | number; label: string }[]>([]);
   const [showModalCamera, setShowModalCamera] = useState<boolean>(false);
-  const [showLikePublic, setShowLikePublic] = useState<boolean>(false);
-  const [isLike, setIsLike] = useState<boolean>(true);
   const [isPublic, setIsPublic] = useState<boolean>(true);
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [datePickerType, setDatePickerType] = useState<'text' | 'date'>('text');
@@ -41,7 +38,7 @@ export const TextArea: React.FC = () => {
     formData.set('moduleid', moduleId);
     formData.set('recordid', recordId);
     formData.set('content', valueInput.trim());
-    formData.set('islike', isLike ? '1' : '0');
+    formData.set('islike', '1');
     formData.set('ispublic', isPublic ? '1' : '0');
     formData.set('secretkey', SECRET_KEY);
 
@@ -83,7 +80,6 @@ export const TextArea: React.FC = () => {
         }
         setValueInput('');
         setIsPublic(true);
-        setIsLike(true);
         setDatePickerType('text');
         setDate(undefined);
         setStatus(undefined);
@@ -92,7 +88,7 @@ export const TextArea: React.FC = () => {
         dispatch(setNewFeeds(newFeeds));
       })
       .catch((error) => toast.error(error.message, { autoClose: false }));
-  }, [valueInput, moduleId, recordId, dispatch, feeds, status, uploadImages, isLike, isPublic, date, channelId]);
+  }, [valueInput, moduleId, recordId, dispatch, feeds, status, uploadImages, isPublic, date, channelId]);
 
   const onUploadImages = useCallback(
     (files: FileList) => {
@@ -206,7 +202,7 @@ export const TextArea: React.FC = () => {
 
             <button
               onClick={() => setShowModalCamera(true)}
-              className="hover:bg-indigo-50 duration-300 rounded w-10 h-10 flex justify-center items-center text-gray-500 mr-2"
+              className="hover:bg-indigo-50 duration-300 rounded w-10 h-10 flex justify-center items-center text-gray-500 mr-4"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path
@@ -217,71 +213,14 @@ export const TextArea: React.FC = () => {
               </svg>
             </button>
 
-            <div className="relative inline-block text-left mr-3 z-10">
-              <div>
-                <button
-                  onClick={() => setShowLikePublic(!showLikePublic)}
-                  className={clsx({
-                    'duration-300 rounded w-10 h-10 flex justify-center items-center text-gray-500': true,
-                    'bg-indigo-50': showLikePublic,
-                    'hover:bg-indigo-50': !showLikePublic,
-                  })}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                  </svg>
-                </button>
-              </div>
-
-              {showLikePublic && (
-                <div
-                  className="origin-top-right absolute z-10 right-0 mt-2 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
-                  role="menu"
-                  aria-orientation="vertical"
-                  aria-labelledby="menu-button"
-                >
-                  <div>
-                    {/* <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" --> */}
-                    <div
-                      onClick={() => {
-                        setIsLike(!isLike);
-                        setShowLikePublic(false);
-                      }}
-                      className="px-6 py-2.5 flex items-center justify-between cursor-pointer hover:bg-gray-100 duration-300"
-                    >
-                      <span>Like</span>
-                      {isLike && (
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="#12a02a">
-                          <path
-                            fillRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      )}
-                    </div>
-                    <hr />
-                    <div
-                      onClick={() => {
-                        setIsPublic(!isPublic);
-                        setShowLikePublic(false);
-                      }}
-                      className="px-6 py-2.5 flex items-center justify-between cursor-pointer hover:bg-gray-100 duration-300"
-                    >
-                      <span>Public</span>
-                      {isPublic && (
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="#12a02a">
-                          <path
-                            fillRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
+            <div className="h-10 flex items-center">
+              <input
+                type="checkbox"
+                className="form-checkbox h-4 w-4 text-gray-600 block mr-0.5"
+                checked={isPublic}
+                onChange={(e) => setIsPublic(e.target.checked)}
+              />
+              <span className="mr-3 text-gray-700 text-sm block">Public</span>
             </div>
           </div>
           <div className="sm:flex sm:items-center mt-4 sm:mt-0">

@@ -2,15 +2,16 @@ import axios from 'axios';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { get, upperFirst } from 'lodash';
+import { upperFirst } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { FeedType } from 'types/feed';
 import { SECRET_KEY } from '../../../config';
 import { setNewFeeds } from '../../../store/action';
-import { getProps } from '../../../utils/helper';
+import { getFeeds, getProps } from '../../../utils/helper';
 import { FeedItemStyle } from './feed-item.style';
+import { FeedItemImage } from './subs/feed-item-image';
 import { FeedItemMoreAction } from './subs/feed-item-more-action';
 import { FeedItemReply } from './subs/feed-item-reply';
 
@@ -38,7 +39,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
   const [valueInputFeed, setValueInputFeed] = useState(`${Content.Content.split('<br />').join('')}`);
 
   const dispatch = useDispatch();
-  const feeds: FeedType[] | null = useSelector((state) => get(state, 'feeds'));
+  const feeds = useSelector(getFeeds);
 
   const permisionEditFeed = userInfo?.id === Number(UserID) || userInfo?.role === 'ADMIN';
 
@@ -158,54 +159,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
                 'w-fit-content': !editMode,
               })}
             >
-              <div className="font-semibold flex items-center">
-                <span className="text-blue-800">{UserFullName}</span>
-
-                <div className="flex items-center ml-3">
-                  {Content.date && (
-                    <div className="flex px-2 py-0.5 rounded-2xl bg-blue-600 items-center mr-3">
-                      <span className="text-white mr-1">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-4 w-4"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                          />
-                        </svg>
-                      </span>
-                      <span className="text-sm text-white">{dayjs(Content.date).format('DD/MM/YYYY')}</span>
-                    </div>
-                  )}
-                  {Content.status && (
-                    <div className="flex px-2 py-0.5 rounded-2xl bg-green-600 items-center">
-                      <span className="text-white mr-1">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-4 w-3.5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
-                          />
-                        </svg>
-                      </span>
-                      <span className="mr-2 text-sm text-white">{upperFirst(Content.status.toLowerCase())}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
+              <span className="font-semibold block text-blue-800">{UserFullName}</span>
               <div
                 className={clsx({
                   'flex justify-between': true,
@@ -251,19 +205,14 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
                   </div>
                 )}
               </div>
+              {Content.Image && Content.Image.length > 0 && <FeedItemImage Image={Content.Image} />}
             </div>
 
             {!editMode && !readOnly && permisionEditFeed && (
               <FeedItemMoreAction ID={ID} onTurnOnEditMode={() => setEditMode(true)} />
             )}
           </div>
-          {Content.Image && Content.Image.length > 0 && (
-            <div className="flex items-center mt-1">
-              {Content.Image.map((item) => {
-                return <img src={item.url} alt="image" key={item.url} className="h-28 w-auto rounded-xl" />;
-              })}
-            </div>
-          )}
+
           <div className="flex items-center mt-1">
             {isLike ? (
               <>
@@ -305,6 +254,50 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
             <span className="block opacity-50">
               {dayjs(PostedAt * 1000).format('DD/MM/YYYY')} ({dayjs(PostedAt * 1000).fromNow()})
             </span>
+            <div className="flex items-center ml-3">
+              {Content.date && (
+                <div className="flex px-2 py-0.5 rounded-2xl bg-blue-600 items-center mr-3">
+                  <span className="text-white mr-1">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                      />
+                    </svg>
+                  </span>
+                  <span className="text-sm text-white">{dayjs(Content.date).format('DD/MM/YYYY')}</span>
+                </div>
+              )}
+              {Content.status && (
+                <div className="flex px-2 py-0.5 rounded-2xl bg-green-600 items-center">
+                  <span className="text-white mr-1">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-3.5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+                      />
+                    </svg>
+                  </span>
+                  <span className="mr-2 text-sm text-white">{upperFirst(Content.status.toLowerCase())}</span>
+                </div>
+              )}
+            </div>
           </div>
 
           {showReplyInput && (
@@ -323,7 +316,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
                 rows={1}
                 autoFocus
                 onChange={(e) => setValueReplyInput(e.target.value)}
-                className="w-full flex-1 flex items-center rounded-2xl py-reply overflow-hidden border px-4 bg-gray-100 text-gray-700 placeholder-gray-400 shadow-sm focus:outline-none resize-none"
+                className="w-full flex-1 flex items-center rounded-2xl py-reply overflow-hidden border px-4 bg-gray-50 text-gray-700 placeholder-gray-400 shadow-sm focus:outline-none resize-none"
               />
             </div>
           )}

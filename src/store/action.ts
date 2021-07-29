@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Dispatch } from 'react';
 import { toast } from 'react-toastify';
 import { FeedType } from '../types/feed';
-import { SetProps, UploadImage } from './type';
+import { PaginationFeed, SetProps, UploadImage } from './type';
 
 export const ACTION_GET_FEEDS_SUCCESS = 'ACTION_GET_FEEDS_SUCCESS';
 export const ACTION_SET_NEW_FEEDS = 'ACTION_SET_NEW_FEEDS';
@@ -10,6 +10,7 @@ export const ACTION_SET_NEW_UPLOAD_IMAGE = 'ACTION_SET_NEW_UPLOAD_IMAGE';
 export const ACTION_REMOVE_UPLOAD_IMAGE = 'ACTION_REMOVE_UPLOAD_IMAGE';
 export const ACTION_REMOVE_ALL_UPLOAD_IMAGE = 'ACTION_REMOVE_ALL_UPLOAD_IMAGE';
 export const ACTION_SET_PROPS = 'ACTION_SET_PROPS';
+export const ACTION_SET_PAGINATION_FEED = 'ACTION_SET_PAGINATION_FEED';
 
 const getFeedsFromApiSuccess = (data: FeedType[]) => {
   return <const>{
@@ -18,7 +19,14 @@ const getFeedsFromApiSuccess = (data: FeedType[]) => {
   };
 };
 
-export const getFeedsFromApi = (moduleId?: string, recordId?: string, channelId?: string) => {
+export const setPaginationFeed = (data: PaginationFeed) => {
+  return <const>{
+    type: ACTION_SET_PAGINATION_FEED,
+    payload: { data },
+  };
+};
+
+export const getFeedsFromApi = (moduleId?: string, recordId?: string, channelId?: string, page?: number) => {
   return (dispatch: Dispatch<unknown>) => {
     axios
       .get('/api/feed/getfeeds', {
@@ -26,16 +34,27 @@ export const getFeedsFromApi = (moduleId?: string, recordId?: string, channelId?
           moduleid: moduleId,
           recordid: recordId,
           channelid: channelId,
-          page: 1,
+          page: page ?? 1,
           limit: 10,
         },
       })
       .then((response) => {
-        const { success, feeds, message } = response.data;
+        const { success, feeds, message, total, page } = response.data;
         if (!success || response.status > 400) {
           throw new Error(message || 'Get feed list fail!');
         }
         dispatch(getFeedsFromApiSuccess(feeds));
+        const totalItems = Number(total);
+        const size = 10;
+        const totalPages = totalItems % size === 0 ? totalItems / size : Math.ceil(totalItems / size);
+        dispatch(
+          setPaginationFeed({
+            totalPages: totalPages ?? 0,
+            totalItems,
+            page: Number(page),
+            size,
+          })
+        );
       })
       .catch((error) => toast.error(error.message, { autoClose: false }));
   };
