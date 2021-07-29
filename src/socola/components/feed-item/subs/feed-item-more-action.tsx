@@ -1,11 +1,10 @@
 import axios from 'axios';
 import clsx from 'clsx';
-import get from 'lodash.get';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SECRET_KEY } from '../../../../config/index';
 import { setNewFeeds } from '../../../../store/action';
-import { FeedType } from '../../../../types/feed';
+import { getFeeds } from '../../../../utils/helper';
 
 export const FeedItemMoreAction: React.FC<{ ID: number; onTurnOnEditMode: () => void }> = ({
   ID,
@@ -13,7 +12,7 @@ export const FeedItemMoreAction: React.FC<{ ID: number; onTurnOnEditMode: () => 
 }) => {
   const [showFeedActions, setShowFeedActions] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const feeds: FeedType[] | null = useSelector((state) => get(state, 'feeds'));
+  const feeds = useSelector(getFeeds);
 
   const onDeleteFeed = useCallback(() => {
     const formData = new FormData();

@@ -1,17 +1,17 @@
-import get from 'lodash.get';
 import React, { useEffect } from 'react';
 import { List } from 'react-content-loader';
 import { useDispatch, useSelector } from 'react-redux';
 import { getFeedsFromApi } from '../../../store/action';
-import { FeedType } from '../../../types/feed';
-import { getProps } from '../../../utils/helper';
+import { getFeeds, getPaginationFeed, getProps } from '../../../utils/helper';
 import { FeedItem } from '../feed-item/feed-item';
+import { Pagination } from '../pagination/pagination';
 
 export const FeedList: React.FC = () => {
   const dataProps = useSelector(getProps);
   const { moduleId, channelId, recordId } = dataProps;
   const dispatch = useDispatch();
-  const feeds: FeedType[] | null = useSelector((state) => get(state, 'feeds'));
+  const feeds = useSelector(getFeeds);
+  const pagination = useSelector(getPaginationFeed);
 
   useEffect(() => {
     dispatch(getFeedsFromApi(moduleId, recordId, channelId));
@@ -30,10 +30,11 @@ export const FeedList: React.FC = () => {
   }
 
   return (
-    <div className="mt-10">
+    <div className="my-10">
       {feeds.map((item) => (
         <FeedItem item={item} key={item.ID} />
       ))}
+      <Pagination pagination={pagination} />
     </div>
   );
 };

@@ -22,6 +22,12 @@ export const initialState: State = {
       role: '',
     },
   },
+  paginationFeed: {
+    totalItems: 0,
+    totalPages: 0,
+    page: 1,
+    size: 10,
+  },
 };
 
 export function rootReducer(state: State = initialState, action: Action) {
@@ -53,6 +59,13 @@ export function rootReducer(state: State = initialState, action: Action) {
       return {
         ...state,
         uploadImages: [],
+      };
+    }
+
+    case ACTIONS.ACTION_SET_PAGINATION_FEED: {
+      return {
+        ...state,
+        paginationFeed: action.payload.data,
       };
     }
 

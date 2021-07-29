@@ -29,6 +29,14 @@ export const getProps = (state: State) => {
   return state.props;
 };
 
+export const getPaginationFeed = (state: State) => {
+  return state.paginationFeed;
+};
+
+export const getFeeds = (state: State) => {
+  return state.feeds;
+};
+
 const isSingleElement = (data: OptionsType<OptionProps> | OptionProps | null): data is OptionProps => {
   return !Array.isArray(data);
 };
