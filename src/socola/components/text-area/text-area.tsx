@@ -140,7 +140,7 @@ export const TextArea: React.FC = () => {
       <div>
         <textarea
           value={valueInput}
-          placeholder="Type here..."
+          placeholder="Create new post..."
           rows={3}
           onChange={(e) => setValueInput(e.target.value)}
           className="w-full flex-1 flex items-center rounded py-2 overflow-hidden border px-3 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:border-blue-600 focus:outline-none"

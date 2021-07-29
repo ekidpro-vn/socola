@@ -22,7 +22,10 @@ export interface FeedType {
     date: string;
     status: string;
     note: string | null;
-    Image: string[];
+    Image: {
+      name: string;
+      url: string;
+    }[];
   };
   ConvoID: string;
   Department: string;
