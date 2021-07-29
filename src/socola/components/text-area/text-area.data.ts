@@ -1,4 +1,6 @@
 export const optionsStatus = [
-  { value: 'NORMAL', label: 'Normal' },
-  { value: 'IMPORTANT', label: 'Important' },
+  { value: 'NEW', label: 'New' },
+  { value: 'DONE', label: 'Done' },
+  { value: 'INPROGRESS', label: 'InProgress' },
+  { value: 'PRIORITY', label: 'Priority' },
 ];

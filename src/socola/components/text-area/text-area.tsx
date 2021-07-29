@@ -6,13 +6,14 @@ import { get, isEmpty } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
+import { toast } from 'react-toastify';
 import { v4 as uuid } from 'uuid';
 import { SendIcon } from '../../../assets/send-icon';
 import { SECRET_KEY } from '../../../config';
 import { removeAllUploadImage, removeUploadImage, setNewFeeds, setNewUploadImage } from '../../../store/action';
 import { UploadImage } from '../../../store/type';
 import { FeedType } from '../../../types/feed';
-import { base64ToBlob, getProps } from '../../../utils/helper';
+import { base64ToBlob, getDataDropdown, getProps } from '../../../utils/helper';
 import { Camera } from '../camera';
 import { optionsStatus } from './text-area.data';
 import { TextAreaStyle } from './text-area.style';
@@ -24,7 +25,7 @@ export const TextArea: React.FC = () => {
   const dispatch = useDispatch();
   const feeds: FeedType[] | null = useSelector((state) => get(state, 'feeds'));
   const uploadImages: UploadImage[] | undefined = useSelector((state) => get(state, 'uploadImages'));
-  const [status, setStatus] = useState<{ value: string | number; label: string } | undefined>(undefined);
+  const [status, setStatus] = useState<{ value: string | number; label: string }[]>([]);
   const [showModalCamera, setShowModalCamera] = useState<boolean>(false);
   const [showLikePublic, setShowLikePublic] = useState<boolean>(false);
   const [isLike, setIsLike] = useState<boolean>(true);
@@ -33,6 +34,9 @@ export const TextArea: React.FC = () => {
   const [datePickerType, setDatePickerType] = useState<'text' | 'date'>('text');
 
   const onPostValue = useCallback(() => {
+    if (!valueInput) {
+      return;
+    }
     const formData = new FormData();
     formData.set('moduleid', moduleId);
     formData.set('recordid', recordId);
@@ -49,8 +53,9 @@ export const TextArea: React.FC = () => {
       formData.set('date', date.toDateString());
     }
 
-    if (status) {
-      formData.set('status', `${status.value}`);
+    if (status && status.length > 0) {
+      const statusValue = status.map((item) => item.value).join(',');
+      formData.set('status', statusValue);
     }
 
     if (uploadImages && uploadImages.length > 0) {
@@ -86,7 +91,7 @@ export const TextArea: React.FC = () => {
         const newFeeds = [feeddata, ...feeds];
         dispatch(setNewFeeds(newFeeds));
       })
-      .catch((error) => console.log(error.message));
+      .catch((error) => toast.error(error.message, { autoClose: false }));
   }, [valueInput, moduleId, recordId, dispatch, feeds, status, uploadImages, isLike, isPublic, date, channelId]);
 
   const onUploadImages = useCallback(
@@ -283,7 +288,7 @@ export const TextArea: React.FC = () => {
             {showDate && (
               <div className="sm:w-48 sm:mr-4 mb-3 sm:mb-0">
                 <input
-                  placeholder="Date"
+                  placeholder="Milestone"
                   className={clsx({
                     'block w-full text-gray-700 border border-gray-300 rounded px-3 leading-tight focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-1':
                       true,
@@ -298,7 +303,12 @@ export const TextArea: React.FC = () => {
             )}
             {showStatus && (
               <div className="sm:w-48">
-                <Select options={statusOption || optionsStatus} placeholder="Status" onChange={(e) => setStatus(e)} />
+                <Select
+                  options={statusOption || optionsStatus}
+                  isMulti
+                  placeholder="Tags"
+                  onChange={(e) => setStatus(getDataDropdown(e))}
+                />
               </div>
             )}
           </div>

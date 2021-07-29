@@ -1,3 +1,5 @@
+import { OptionsType } from 'react-select';
+import { OptionProps } from 'types/socola';
 import { State } from '../store/type';
 
 const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
@@ -25,4 +27,24 @@ export const base64ToBlob = (base64: string) => {
 
 export const getProps = (state: State) => {
   return state.props;
+};
+
+const isSingleElement = (data: OptionsType<OptionProps> | OptionProps | null): data is OptionProps => {
+  return !Array.isArray(data);
+};
+
+export const getDataDropdown = (data: OptionsType<OptionProps> | OptionProps | null): OptionProps[] => {
+  if (!data) {
+    return [];
+  }
+
+  if (Array.isArray(data)) {
+    return data;
+  }
+
+  if (isSingleElement(data)) {
+    return [data];
+  }
+
+  return [];
 };
