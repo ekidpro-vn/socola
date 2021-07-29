@@ -1,6 +1,8 @@
 import axios from 'axios';
 import React from 'react';
 import { Provider } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { applyMiddleware, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import { SOCOLA_URL } from './config';
@@ -28,6 +30,17 @@ const App: React.FC<SocolaProps> = (props) => {
   return (
     <Provider store={store}>
       <Socola {...props} />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </Provider>
   );
 };

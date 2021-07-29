@@ -1,6 +1,16 @@
 import styled from 'styled-components';
 
 export const FeedItemStyle = styled.div`
+  .py-reply {
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+  }
+
+  .text-reply {
+    font-size: 0.9125rem;
+    line-height: 1.25rem;
+  }
+
   .one-primary-feed {
     .btn-more-option-feed-hover {
       opacity: 0;
