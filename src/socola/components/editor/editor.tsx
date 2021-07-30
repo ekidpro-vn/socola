@@ -284,13 +284,15 @@ export const Editor: React.FC = () => {
           </div>
           <div className="sm:flex sm:items-center mt-4 sm:mt-0">
             {showDate && (
-              <div className="mr-3">
+              <div className="mr-3 w-full sm:w-auto mb-3 sm:mb-0">
                 <DatePicker
                   dateFormat="dd/MM/yyyy"
                   placeholderText="Milestone"
+                  wrapperClassName="w-full"
+                  popperClassName="w-full"
                   selected={date}
                   onChange={(e: Date | null) => setDate(e)}
-                  className="focus:outline-none border border-gray-300 focus:border-blue-500 px-3 py-1.5 rounded"
+                  className="focus:outline-none border w-full border-gray-300 focus:border-blue-500 px-3 py-1.5 rounded"
                 />
               </div>
             )}
