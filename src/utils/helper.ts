@@ -38,6 +38,10 @@ export const getFeeds = (state: State) => {
   return state.feeds;
 };
 
+export const getUploadImages = (state: State) => {
+  return state.uploadImages;
+};
+
 export const getDisplayTime = (timestamp: number) => {
   // milisecond
   const today = dayjs().startOf('day').valueOf();

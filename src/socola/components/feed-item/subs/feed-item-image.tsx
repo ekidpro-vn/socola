@@ -13,7 +13,7 @@ export const FeedItemImage: React.FC<{ Image: { name: string; url: string }[] }>
         return (
           <button
             key={item.url}
-            className="col-span-1 float-left mr-6 h-28 w-48"
+            className="mb-4 float-left mr-6 h-28 w-48"
             onClick={() => {
               setShowLightbox(true);
               setPhotoIndex(index);

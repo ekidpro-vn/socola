@@ -34,8 +34,8 @@ export const FeedItemStyle = styled.div`
     }
   }
 
-  .w-fit-content {
-    width: fit-content;
+  .w-max-content {
+    width: max-content;
   }
 
   @media (max-width: 639px) {

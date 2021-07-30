@@ -156,7 +156,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
               className={clsx({
                 'bg-gray-100 px-4 py-2 rounded-lg duration-300 mr-3': true,
                 'w-full': editMode,
-                'w-fit-content': !editMode,
+                'w-max-content': !editMode,
               })}
             >
               <span className="font-semibold block text-blue-800">{UserFullName}</span>
@@ -192,13 +192,13 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
                   <div className="ml-4 w-20">
                     <button
                       onClick={onEditFeed}
-                      className="block w-full text-center bg-blue-500 duration-300 rounded-md text-white hover:bg-blue-600 px-3 py-1"
+                      className="block w-full text-sm shadow-md text-center bg-blue-500 duration-300 rounded-md text-white hover:bg-blue-600 px-3 py-1.5"
                     >
                       Save
                     </button>
                     <button
                       onClick={() => setEditMode(false)}
-                      className="block w-full text-center bg-white duration-300 rounded-md border px-3 py-1 mt-2.5"
+                      className="block text-sm shadow w-full text-center bg-white duration-300 rounded-md border px-3 py-1.5 mt-3"
                     >
                       Cancel
                     </button>
@@ -213,48 +213,52 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
             )}
           </div>
 
-          <div className="flex items-center mt-1">
-            {isLike ? (
-              <>
-                {LikesCount > 0 && <span className="block mr-0.5">{LikesCount}</span>}
-                <button
-                  onClick={() => onLikeComment(FeedKey)}
-                  className={clsx({
-                    'mr-3': true,
-                    'text-gray-500 duration-300 hover:text-blue-500': !isYouLiked && !readOnly,
-                    'text-blue-500': isYouLiked && !readOnly,
-                    'text-gray-500': readOnly,
-                  })}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
-                  </svg>
-                </button>
-              </>
-            ) : null}
+          <div className="sm:flex sm:items-center mt-1.5">
+            <div className="flex items-center">
+              {isLike ? (
+                <>
+                  {LikesCount > 0 && <span className="block mr-0.5">{LikesCount}</span>}
+                  <button
+                    onClick={() => onLikeComment(FeedKey)}
+                    className={clsx({
+                      'mr-3': true,
+                      'text-gray-500 duration-300 hover:text-blue-500': !isYouLiked && !readOnly,
+                      'text-blue-500': isYouLiked && !readOnly,
+                      'text-gray-500': readOnly,
+                    })}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+                    </svg>
+                  </button>
+                </>
+              ) : null}
 
-            {CommentCount > 0 && <span className="block mr-0.5">{CommentCount}</span>}
-            <button
-              className="mr-3 text-gray-500"
-              onClick={() => {
-                if (readOnly) {
-                  return;
-                }
-                setShowReplyInput(!showReplyInput);
-              }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path
-                  fillRule="evenodd"
-                  d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </button>
-            <span className="block opacity-70 text-sm">{getDisplayTime(PostedAt * 1000)}</span>
-            <div className="flex items-center ml-3">
+              {CommentCount > 0 && <span className="block mr-0.5">{CommentCount}</span>}
+
+              <button
+                className="mr-3 text-gray-500"
+                onClick={() => {
+                  if (readOnly) {
+                    return;
+                  }
+                  setShowReplyInput(!showReplyInput);
+                }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path
+                    fillRule="evenodd"
+                    d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+
+              <span className="block opacity-70 text-sm whitespace-nowrap">{getDisplayTime(PostedAt * 1000)}</span>
+            </div>
+            <div className="sm:flex sm:items-center sm:ml-3 mt-3 sm:mt-0 float-left grid grid-cols-2 gap-x-3 gap-y-2 sm:gap-0">
               {Content.date && (
-                <div className="flex px-2 py-0.5 rounded-2xl bg-blue-600 items-center mr-3">
+                <div className="flex px-2 py-0.5 rounded-2xl bg-blue-600 items-center mr-3 col-span-1">
                   <span className="text-white mr-1">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -279,7 +283,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
                   return (
                     <div
                       key={`${item}_${index}`}
-                      className="flex px-2 py-0.5 rounded-2xl bg-green-600 items-center mr-2"
+                      className="flex px-2 py-0.5 rounded-2xl bg-green-600 items-center mr-2 col-span-1"
                     >
                       <span className="text-white mr-1">
                         <svg
@@ -305,7 +309,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
           </div>
 
           {showReplyInput && (
-            <div className="mt-2">
+            <div className="mt-2 pr-10">
               <textarea
                 onKeyUp={(e) => {
                   if (e.code === 'Enter' && !e.shiftKey) {

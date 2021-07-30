@@ -2,8 +2,8 @@ import { Modal } from '@ekidpro/ui';
 import axios from 'axios';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
-import { get, isEmpty } from 'lodash';
-import React, { useCallback, useState } from 'react';
+import { isEmpty } from 'lodash';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
@@ -12,11 +12,13 @@ import { LoadingIcon } from '../../../assets/loading';
 import { SendIcon } from '../../../assets/send-icon';
 import { SECRET_KEY } from '../../../config';
 import { removeAllUploadImage, removeUploadImage, setNewFeeds, setNewUploadImage } from '../../../store/action';
-import { UploadImage } from '../../../store/type';
-import { base64ToBlob, getDataDropdown, getFeeds, getProps } from '../../../utils/helper';
+import { base64ToBlob, getDataDropdown, getFeeds, getProps, getUploadImages } from '../../../utils/helper';
 import { Camera } from '../camera';
 import { optionsStatus } from './text-area.data';
 import { TextAreaStyle } from './text-area.style';
+
+const MAX_CAPACITY_ONE_IMAGE_UPLOAD = 2000000; // 2MB
+const MAX_AMOUNT_IMAGE_UPLOAD = 5;
 
 export const TextArea: React.FC = () => {
   const dataProps = useSelector(getProps);
@@ -24,16 +26,17 @@ export const TextArea: React.FC = () => {
   const [valueInput, setValueInput] = useState<string>('');
   const dispatch = useDispatch();
   const feeds = useSelector(getFeeds);
-  const uploadImages: UploadImage[] | undefined = useSelector((state) => get(state, 'uploadImages'));
+  const uploadImages = useSelector(getUploadImages);
   const [status, setStatus] = useState<{ value: string | number; label: string }[]>([]);
   const [showModalCamera, setShowModalCamera] = useState<boolean>(false);
   const [isPublic, setIsPublic] = useState<boolean>(true);
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [datePickerType, setDatePickerType] = useState<'text' | 'date'>('text');
   const [loading, setLoading] = useState<boolean>(false);
+  const [errorMessageUpload, setErrorMessageUpload] = useState<string>('');
 
   const onPostValue = useCallback(() => {
-    if (!valueInput || loading) {
+    if (!valueInput || loading || errorMessageUpload) {
       return;
     }
     setLoading(true);
@@ -84,9 +87,9 @@ export const TextArea: React.FC = () => {
         setLoading(false);
         setValueInput('');
         setIsPublic(true);
-        setDatePickerType('text');
+        // setDatePickerType('text');
         setDate(undefined);
-        setStatus(undefined);
+        setStatus([]);
         dispatch(removeAllUploadImage());
         const newFeeds = [feeddata, ...feeds];
         dispatch(setNewFeeds(newFeeds));
@@ -95,7 +98,20 @@ export const TextArea: React.FC = () => {
         toast.error(error.message, { autoClose: false });
         setLoading(false);
       });
-  }, [valueInput, moduleId, recordId, dispatch, feeds, status, uploadImages, isPublic, date, channelId, loading]);
+  }, [
+    valueInput,
+    moduleId,
+    recordId,
+    dispatch,
+    feeds,
+    status,
+    uploadImages,
+    isPublic,
+    date,
+    channelId,
+    loading,
+    errorMessageUpload,
+  ]);
 
   const onUploadImages = useCallback(
     (files: FileList) => {
@@ -138,6 +154,28 @@ export const TextArea: React.FC = () => {
     [dispatch]
   );
 
+  useEffect(() => {
+    if (uploadImages && uploadImages.length > MAX_AMOUNT_IMAGE_UPLOAD) {
+      setErrorMessageUpload('Exceeded 5 photos on the post!');
+    } else {
+      const indexError: number[] = [];
+      for (let i = 0; i < uploadImages.length; i++) {
+        if (uploadImages[i].file && uploadImages[i].file.size > MAX_CAPACITY_ONE_IMAGE_UPLOAD) {
+          indexError.push(i);
+        }
+      }
+      if (indexError.length > 0) {
+        setErrorMessageUpload(
+          `Exceeds 2MB in ${indexError.length === 1 ? 'photo' : 'photos'} with positions ${indexError
+            .map((item) => item + 1)
+            .join(', ')}!`
+        );
+      } else {
+        setErrorMessageUpload('');
+      }
+    }
+  }, [uploadImages]);
+
   return (
     <TextAreaStyle>
       <div>
@@ -150,33 +188,42 @@ export const TextArea: React.FC = () => {
         />
       </div>
       {!isEmpty(uploadImages) && (
-        <div className="mt-3 flex items-center justify-start px-3">
-          {Object.entries(uploadImages).map((item, index) => {
-            const { base64Url, id } = item[1];
+        <div>
+          <div className="mt-3 flex items-center justify-start px-3">
+            {Object.entries(uploadImages).map((item, index) => {
+              const { base64Url, id } = item[1];
 
-            return (
-              <div className="relative mr-4 preview-image" key={`preview_${index}`}>
-                <img src={`${base64Url}`} alt="preview" className="w-20 h-20 rounded object-cover" />
-                <button
-                  onClick={() => onRemoveUploadImage(id)}
-                  className="absolute -top-1.5 -right-1.5 p-0.5 duration-300 text-white bg-red-600 rounded-full"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-3.5 w-3.5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
+              return (
+                <div className="relative mr-4 preview-image" key={`preview_${index}`}>
+                  <img src={`${base64Url}`} alt="preview" className="w-20 h-20 rounded object-cover" />
+                  <button
+                    onClick={() => onRemoveUploadImage(id)}
+                    className="absolute -top-1.5 -right-1.5 p-0.5 duration-300 text-white bg-red-600 rounded-full"
                   >
-                    <path
-                      fillRule="evenodd"
-                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-              </div>
-            );
-          })}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-3.5 w-3.5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+          {errorMessageUpload ? (
+            <span className="block text-center text-red-500 italic mt-3">{errorMessageUpload}</span>
+          ) : (
+            <span className="block text-center text-gray-500 italic mt-3">
+              Maximum size of 2MB per image and maximum of 5 images per post.
+            </span>
+          )}
         </div>
       )}
       {/* Control */}
@@ -223,7 +270,7 @@ export const TextArea: React.FC = () => {
             <div className="h-10 flex items-center">
               <input
                 type="checkbox"
-                className="form-checkbox h-4 w-4 text-gray-600 block mr-0.5"
+                className="form-checkbox h-4 w-4 text-gray-600 block mr-1"
                 checked={isPublic}
                 onChange={(e) => setIsPublic(e.target.checked)}
               />
@@ -267,7 +314,7 @@ export const TextArea: React.FC = () => {
               'bg-green-600 text-white px-4 py-2 rounded duration-300 flex items-center justify-center': true,
               'opacity-70': !valueInput,
               'opacity-100': !!valueInput,
-              'cursor-not-allowed': loading,
+              'cursor-not-allowed': loading || errorMessageUpload,
             })}
           >
             {loading ? <LoadingIcon className="w-4 h-4" /> : <SendIcon className="w-5 h-3.5" />}

@@ -78,7 +78,7 @@ export const FeedItemMoreAction: React.FC<{ ID: number; onTurnOnEditMode: () => 
                 </g>
               </svg>
 
-              <div className="bg-white w-40 rounded-md">
+              <div className="bg-white w-48 rounded-md p-2.5">
                 <button
                   onClick={() => {
                     setShowFeedActions(false);
@@ -94,7 +94,7 @@ export const FeedItemMoreAction: React.FC<{ ID: number; onTurnOnEditMode: () => 
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span className="ml-2 text-gray-700">Edit comment</span>
+                  <span className="ml-2 text-gray-700 text-sm font-medium">Edit comment</span>
                 </button>
                 <hr />
                 <button
@@ -108,7 +108,7 @@ export const FeedItemMoreAction: React.FC<{ ID: number; onTurnOnEditMode: () => 
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span className="ml-2 text-gray-700">Delete</span>
+                  <span className="ml-2 text-gray-700 text-sm font-medium">Delete comment</span>
                 </button>
               </div>
             </div>
