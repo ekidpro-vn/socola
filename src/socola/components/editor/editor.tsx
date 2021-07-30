@@ -1,9 +1,9 @@
 import { Modal } from '@ekidpro/ui';
 import axios from 'axios';
 import clsx from 'clsx';
-import dayjs from 'dayjs';
 import { isEmpty } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
+import DatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
@@ -14,14 +14,14 @@ import { SECRET_KEY } from '../../../config';
 import { removeAllUploadImage, removeUploadImage, setNewFeeds, setNewUploadImage } from '../../../store/action';
 import { base64ToBlob, getDataDropdown, getFeeds, getProps, getUploadImages } from '../../../utils/helper';
 import { Camera } from '../camera';
-import { optionsStatus } from './text-area.data';
-import { TextAreaStyle } from './text-area.style';
+import { optionsStatus } from './editor.data';
+import { EditorStyle } from './editor.style';
 
 const source = axios.CancelToken.source();
 const MAX_CAPACITY_ONE_IMAGE_UPLOAD = 2000000; // 2MB
 const MAX_AMOUNT_IMAGE_UPLOAD = 5;
 
-export const TextArea: React.FC = () => {
+export const Editor: React.FC = () => {
   const dataProps = useSelector(getProps);
   const { channelId, showDate, showStatus, statusOption, moduleId, recordId } = dataProps;
   const [valueInput, setValueInput] = useState<string>('');
@@ -31,8 +31,7 @@ export const TextArea: React.FC = () => {
   const [status, setStatus] = useState<{ value: string | number; label: string }[]>([]);
   const [showModalCamera, setShowModalCamera] = useState<boolean>(false);
   const [isPublic, setIsPublic] = useState<boolean>(true);
-  const [date, setDate] = useState<Date | undefined>(undefined);
-  const [datePickerType, setDatePickerType] = useState<'text' | 'date'>('text');
+  const [date, setDate] = useState<Date | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessageUpload, setErrorMessageUpload] = useState<string>('');
 
@@ -88,8 +87,7 @@ export const TextArea: React.FC = () => {
         setLoading(false);
         setValueInput('');
         setIsPublic(true);
-        // setDatePickerType('text');
-        setDate(undefined);
+        setDate(null);
         setStatus([]);
         dispatch(removeAllUploadImage());
         const newFeeds = [feeddata, ...feeds];
@@ -182,7 +180,7 @@ export const TextArea: React.FC = () => {
   }, [uploadImages]);
 
   return (
-    <TextAreaStyle>
+    <EditorStyle>
       <div>
         <textarea
           value={valueInput}
@@ -192,6 +190,7 @@ export const TextArea: React.FC = () => {
           className="w-full flex-1 flex items-center rounded py-2 overflow-hidden border px-3 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:border-blue-600 focus:outline-none"
         />
       </div>
+
       {!isEmpty(uploadImages) && (
         <div>
           <div className="mt-3 flex items-center justify-start px-3">
@@ -231,6 +230,7 @@ export const TextArea: React.FC = () => {
           )}
         </div>
       )}
+
       {/* Control */}
       <div className="mt-5">
         <div className="sm:flex sm:items-center w-full">
@@ -284,18 +284,13 @@ export const TextArea: React.FC = () => {
           </div>
           <div className="sm:flex sm:items-center mt-4 sm:mt-0">
             {showDate && (
-              <div className="sm:w-48 sm:mr-4 mb-3 sm:mb-0">
-                <input
-                  placeholder="Milestone"
-                  className={clsx({
-                    'block w-full text-gray-700 border border-gray-300 rounded px-3 leading-tight focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-1':
-                      true,
-                    'py-1.5': datePickerType === 'date',
-                    'placeholder-gray-500 py-2': datePickerType === 'text',
-                  })}
-                  type={datePickerType}
-                  onFocus={() => setDatePickerType('date')}
-                  onChange={(e) => setDate(dayjs(e.target.value, 'YYYY-MM-DD').toDate())}
+              <div className="mr-3">
+                <DatePicker
+                  dateFormat="dd/MM/yyyy"
+                  placeholderText="Milestone"
+                  selected={date}
+                  onChange={(e: Date | null) => setDate(e)}
+                  className="focus:outline-none border border-gray-300 focus:border-blue-500 px-3 py-1.5 rounded"
                 />
               </div>
             )}
@@ -346,6 +341,6 @@ export const TextArea: React.FC = () => {
           <Camera onCapture={onCaptureCamera} />
         </div>
       </Modal>
-    </TextAreaStyle>
+    </EditorStyle>
   );
 };

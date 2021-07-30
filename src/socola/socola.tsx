@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setProps, setScrollTop } from '../store/action';
 import { SocolaProps } from '../types/socola';
 import { getScrollTop } from '../utils/helper';
+import { Editor } from './components/editor';
 import { FeedList } from './components/feed-list/feed-list';
-import { TextArea } from './components/text-area';
 
 export const Socola: React.FC<SocolaProps> = (props) => {
   const dispatch = useDispatch();
@@ -24,7 +24,7 @@ export const Socola: React.FC<SocolaProps> = (props) => {
 
   return (
     <div ref={socolaRef}>
-      {!props.readOnly && <TextArea />}
+      {!props.readOnly && <Editor />}
       <div className="px-2">
         <FeedList />
       </div>

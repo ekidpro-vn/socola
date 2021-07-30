@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const TextAreaStyle = styled.div`
+export const EditorStyle = styled.div`
   .preview-image {
     button {
       opacity: 0;

@@ -1,6 +1,6 @@
 {
   "name": "@ekidpro/socola",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "main": "./build/index.js",
   "module": "./build/index.es.js",
   "files": [
@@ -90,8 +90,10 @@
   },
   "dependencies": {
     "@ekidpro/ui": "0.0.16",
+    "@types/react-datepicker": "^4.1.4",
     "axios": "^0.21.1",
     "react-content-loader": "^6.0.1",
+    "react-datepicker": "^4.1.1",
     "react-image-lightbox": "^5.1.4",
     "react-select": "^4.3.1",
     "react-toastify": "^7.0.4",
