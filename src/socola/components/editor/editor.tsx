@@ -289,10 +289,10 @@ export const Editor: React.FC = () => {
                   dateFormat="dd/MM/yyyy"
                   placeholderText="Milestone"
                   wrapperClassName="w-full"
-                  popperClassName="w-full"
+                  popperClassName="w-full sm:w-auto"
                   selected={date}
                   onChange={(e: Date | null) => setDate(e)}
-                  className="focus:outline-none border w-full border-gray-300 focus:border-blue-500 px-3 py-1.5 rounded"
+                  className="focus:outline-none border w-full sm:w-auto border-gray-300 focus:border-blue-500 px-3 py-1.5 rounded"
                 />
               </div>
             )}
