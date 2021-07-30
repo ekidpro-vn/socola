@@ -14,6 +14,8 @@ import { FeedItemImage } from './subs/feed-item-image';
 import { FeedItemMoreAction } from './subs/feed-item-more-action';
 import { FeedItemReply } from './subs/feed-item-reply';
 
+const source = axios.CancelToken.source();
+
 export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
   const dataProps = useSelector(getProps);
   const { readOnly, userInfo, renderType } = dataProps;
@@ -69,6 +71,10 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
           dispatch(setNewFeeds(newFeeds));
         })
         .catch((error) => toast.error(error.message, { autoClose: false }));
+
+      return () => {
+        source.cancel('Canceled by the user');
+      };
     },
     [valueReplyInput, dispatch, feeds]
   );
@@ -102,6 +108,10 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
           dispatch(setNewFeeds(newFeeds));
         })
         .catch((error) => toast.error(error.message, { autoClose: false }));
+
+      return () => {
+        source.cancel('Canceled by the user');
+      };
     },
     [dispatch, feeds, readOnly]
   );
@@ -126,6 +136,10 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
         dispatch(setNewFeeds(newFeeds));
       })
       .catch((error) => toast.error(error.message, { autoClose: false }));
+
+    return () => {
+      source.cancel('Canceled by the user');
+    };
   }, [valueInputFeed, ID, dispatch, feeds]);
 
   if (renderType === 'minimum') {

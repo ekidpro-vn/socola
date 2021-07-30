@@ -8,6 +8,8 @@ import { LoadingSeemMoreIcon } from '../../../../assets/loading-see-more';
 import { setNewFeeds } from '../../../../store/action';
 import { getDisplayTime, getFeeds, getProps } from '../../../../utils/helper';
 
+const source = axios.CancelToken.source();
+
 const LIMIT = 5;
 
 export const FeedItemReply: React.FC<{
@@ -57,6 +59,10 @@ export const FeedItemReply: React.FC<{
           dispatch(setNewFeeds(newFeeds));
         })
         .catch((error) => toast.error(error.message, { autoClose: false }));
+
+      return () => {
+        source.cancel('Canceled by the user');
+      };
     },
     [dispatch, feeds, feedkey, readOnly]
   );
@@ -90,6 +96,10 @@ export const FeedItemReply: React.FC<{
         toast.error(error.message, { autoClose: false });
         setLoading(false);
       });
+
+    return () => {
+      source.cancel('Canceled by the user');
+    };
   }, [feedkey, dispatch, feeds, pageSeeMore]);
 
   if (!Comments || Comments.length === 0) {

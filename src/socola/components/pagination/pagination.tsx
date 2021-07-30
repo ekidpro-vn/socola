@@ -1,8 +1,7 @@
+import clsx from 'clsx';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
-import { getFeedsFromApi } from '../../../store/action';
-// import { pushParamURL } from 'utils/helper';
+import { getFeedsFromApi, setScrollTop } from '../../../store/action';
 import { getProps } from '../../../utils/helper';
 
 export interface PaginationType {
@@ -17,8 +16,7 @@ interface PaginationProps {
 }
 
 export const Pagination: React.FC<PaginationProps> = (props) => {
-  const { page, size, totalItems, totalPages } = props.pagination;
-  const history = useHistory();
+  const { page, totalPages } = props.pagination;
   const dispatch = useDispatch();
   const dataProps = useSelector(getProps);
   const { moduleId, recordId, channelId } = dataProps;
@@ -28,6 +26,7 @@ export const Pagination: React.FC<PaginationProps> = (props) => {
       return;
     }
     dispatch(getFeedsFromApi(moduleId, recordId, channelId, totalPages));
+    dispatch(setScrollTop(true));
   }, [page, totalPages, channelId, recordId, moduleId, dispatch]);
 
   const onPrevFirstPage = useCallback(() => {
@@ -35,6 +34,7 @@ export const Pagination: React.FC<PaginationProps> = (props) => {
       return;
     }
     dispatch(getFeedsFromApi(moduleId, recordId, channelId, 1));
+    dispatch(setScrollTop(true));
   }, [page, channelId, recordId, moduleId, dispatch]);
 
   const onNextPage = useCallback(() => {
@@ -42,6 +42,7 @@ export const Pagination: React.FC<PaginationProps> = (props) => {
       return;
     }
     dispatch(getFeedsFromApi(moduleId, recordId, channelId, page + 1));
+    dispatch(setScrollTop(true));
   }, [page, totalPages, channelId, recordId, moduleId, dispatch]);
 
   const onPrevPage = useCallback(() => {
@@ -49,6 +50,7 @@ export const Pagination: React.FC<PaginationProps> = (props) => {
       return;
     }
     dispatch(getFeedsFromApi(moduleId, recordId, channelId, page - 1));
+    dispatch(setScrollTop(true));
   }, [page, channelId, recordId, moduleId, dispatch]);
 
   const listPage: number[] = [];
@@ -74,9 +76,11 @@ export const Pagination: React.FC<PaginationProps> = (props) => {
       <div className="flex items-center justify-center">
         <span
           onClick={onPrevFirstPage}
-          className={`${
-            page === 1 ? 'cursor-not-allowed' : 'cursor-pointer hover:bg-green-600 hover:text-white'
-          } text-gray-600 duration-300 rounded rounded-r-none border-r-0 font-bold text-lg border border-gray-300 w-10 h-10 flex justify-center items-center`}
+          className={clsx({
+            'text-gray-600 duration-300 rounded-lg mx-1 font-bold w-9 h-9 flex justify-center items-center': true,
+            'cursor-not-allowed': page === 1,
+            'cursor-pointer hover:bg-blue-500 hover:text-white': page !== 1,
+          })}
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path
@@ -89,9 +93,11 @@ export const Pagination: React.FC<PaginationProps> = (props) => {
 
         <span
           onClick={onPrevPage}
-          className={`${
-            page <= 1 ? 'cursor-not-allowed' : 'cursor-pointer hover:bg-green-600 hover:text-white'
-          } text-gray-600 duration-300 border-r-0 font-bold text-lg border w-10 h-10 border-gray-300 flex justify-center items-center`}
+          className={clsx({
+            'text-gray-600 duration-300 rounded-lg mx-1 font-bold w-9 h-9 flex justify-center items-center': true,
+            'cursor-not-allowed': page <= 1,
+            'cursor-pointer hover:bg-blue-500 hover:text-white': page > 1,
+          })}
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
             <path
@@ -102,31 +108,35 @@ export const Pagination: React.FC<PaginationProps> = (props) => {
           </svg>
         </span>
 
-        {page > 3 && page <= totalPages && <span className="block mx-2">. . .</span>}
-
         {listPage &&
           listPage.length > 0 &&
           listPage.map((item) => {
             return (
               <span
                 key={`number_${item}`}
-                onClick={() => dispatch(getFeedsFromApi(moduleId, recordId, channelId, item))}
-                className={`${
-                  item === page ? 'bg-green-600 text-white' : 'text-gray-600 hover:bg-green-600 hover:text-white'
-                } border-r-0 duration-300 w-10 h-10 font-bold text-lg border-gray-300 cursor-pointer border flex justify-center items-center`}
+                onClick={() => {
+                  dispatch(getFeedsFromApi(moduleId, recordId, channelId, item));
+                  dispatch(setScrollTop(true));
+                }}
+                className={clsx({
+                  'duration-300 w-9 h-9 mx-1 font-bold rounded-lg cursor-pointer flex justify-center items-center':
+                    true,
+                  'bg-blue-500 text-white': item === page,
+                  'text-gray-600 hover:bg-blue-500 hover:text-white': item !== page,
+                })}
               >
                 {item}
               </span>
             );
           })}
 
-        {page > 0 && page < totalPages - 2 && <span className="block">. . .</span>}
-
         <span
           onClick={onNextPage}
-          className={`${
-            page >= totalPages ? 'cursor-not-allowed' : 'cursor-pointer hover:bg-green-600 hover:text-white'
-          } text-gray-600 duration-300 border-r-0 font-bold border-gray-300 text-lg border w-10 h-10 flex justify-center items-center`}
+          className={clsx({
+            'text-gray-600 duration-300 rounded-lg mx-1 font-bold w-9 h-9 flex justify-center items-center': true,
+            'cursor-not-allowed': page >= totalPages,
+            'cursor-pointer hover:bg-blue-500 hover:text-white': page < totalPages,
+          })}
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
             <path
@@ -139,9 +149,11 @@ export const Pagination: React.FC<PaginationProps> = (props) => {
 
         <span
           onClick={onNextLastPage}
-          className={`${
-            page === totalPages ? 'cursor-not-allowed' : 'cursor-pointer hover:bg-green-600 hover:text-white'
-          } text-gray-600 duration-300 rounded rounded-l-none font-bold text-lg border-gray-300 border w-10 h-10 flex justify-center items-center`}
+          className={clsx({
+            'text-gray-600 duration-300 rounded-lg mx-1 font-bold w-9 h-9 flex justify-center items-center': true,
+            'cursor-not-allowed': page === totalPages,
+            'cursor-pointer hover:bg-blue-500 hover:text-white': page !== totalPages,
+          })}
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path

@@ -6,6 +6,8 @@ import { SECRET_KEY } from '../../../../config/index';
 import { setNewFeeds } from '../../../../store/action';
 import { getFeeds } from '../../../../utils/helper';
 
+const source = axios.CancelToken.source();
+
 export const FeedItemMoreAction: React.FC<{ ID: number; onTurnOnEditMode: () => void }> = ({
   ID,
   onTurnOnEditMode,
@@ -33,6 +35,10 @@ export const FeedItemMoreAction: React.FC<{ ID: number; onTurnOnEditMode: () => 
         dispatch(setNewFeeds(newFeeds));
       })
       .catch((error) => console.log(error.message));
+
+    return () => {
+      source.cancel('Canceled by the user');
+    };
   }, [ID, dispatch, feeds]);
 
   return (

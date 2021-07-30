@@ -42,6 +42,10 @@ export const getUploadImages = (state: State) => {
   return state.uploadImages;
 };
 
+export const getScrollTop = (state: State) => {
+  return state.scrollTop;
+};
+
 export const getDisplayTime = (timestamp: number) => {
   // milisecond
   const today = dayjs().startOf('day').valueOf();

@@ -12,8 +12,8 @@ import { rootReducer } from './store/reducer';
 import { SocolaProps } from './types/socola';
 
 const middleWare = applyMiddleware(thunkMiddleware);
-
 const store = createStore(rootReducer, middleWare);
+const source = axios.CancelToken.source();
 
 const App: React.FC<SocolaProps> = (props) => {
   axios.interceptors.request.use((config) => {
@@ -23,6 +23,8 @@ const App: React.FC<SocolaProps> = (props) => {
         ...config.params,
         token: props.socolaToken,
       };
+      config.timeout = 20000; // 20s
+      config.cancelToken = source.token;
     }
 
     return config;

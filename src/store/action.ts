@@ -4,6 +4,8 @@ import { toast } from 'react-toastify';
 import { FeedType } from '../types/feed';
 import { PaginationFeed, SetProps, UploadImage } from './type';
 
+const source = axios.CancelToken.source();
+
 export const ACTION_GET_FEEDS_SUCCESS = 'ACTION_GET_FEEDS_SUCCESS';
 export const ACTION_SET_NEW_FEEDS = 'ACTION_SET_NEW_FEEDS';
 export const ACTION_SET_NEW_UPLOAD_IMAGE = 'ACTION_SET_NEW_UPLOAD_IMAGE';
@@ -11,6 +13,7 @@ export const ACTION_REMOVE_UPLOAD_IMAGE = 'ACTION_REMOVE_UPLOAD_IMAGE';
 export const ACTION_REMOVE_ALL_UPLOAD_IMAGE = 'ACTION_REMOVE_ALL_UPLOAD_IMAGE';
 export const ACTION_SET_PROPS = 'ACTION_SET_PROPS';
 export const ACTION_SET_PAGINATION_FEED = 'ACTION_SET_PAGINATION_FEED';
+export const ACTION_SET_SCROLL_TOP = 'ACTION_SET_SCROLL_TOP';
 
 const getFeedsFromApiSuccess = (data: FeedType[]) => {
   return <const>{
@@ -57,6 +60,10 @@ export const getFeedsFromApi = (moduleId?: string, recordId?: string, channelId?
         );
       })
       .catch((error) => toast.error(error.message, { autoClose: false }));
+
+    return () => {
+      source.cancel('Canceled by the user');
+    };
   };
 };
 
@@ -95,9 +102,17 @@ export const setProps = (data: SetProps) => {
   };
 };
 
+export const setScrollTop = (data: boolean) => {
+  return {
+    type: ACTION_SET_SCROLL_TOP,
+    payload: { data },
+  };
+};
+
 export type Action =
   | ReturnType<typeof getFeedsFromApiSuccess>
   | ReturnType<typeof setNewFeeds>
   | ReturnType<typeof setNewUploadImage>
   | ReturnType<typeof removeAllUploadImage>
+  | ReturnType<typeof setScrollTop>
   | ReturnType<typeof removeUploadImage>;

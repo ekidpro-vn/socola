@@ -17,6 +17,7 @@ import { Camera } from '../camera';
 import { optionsStatus } from './text-area.data';
 import { TextAreaStyle } from './text-area.style';
 
+const source = axios.CancelToken.source();
 const MAX_CAPACITY_ONE_IMAGE_UPLOAD = 2000000; // 2MB
 const MAX_AMOUNT_IMAGE_UPLOAD = 5;
 
@@ -98,6 +99,10 @@ export const TextArea: React.FC = () => {
         toast.error(error.message, { autoClose: false });
         setLoading(false);
       });
+
+    return () => {
+      source.cancel('Canceled by the user');
+    };
   }, [
     valueInput,
     moduleId,

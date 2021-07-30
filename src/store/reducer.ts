@@ -7,6 +7,7 @@ export const initialState: State = {
   error: '',
   loading: false,
   uploadImages: [],
+  scrollTop: false,
   props: {
     moduleId: '',
     recordId: '',
@@ -66,6 +67,13 @@ export function rootReducer(state: State = initialState, action: Action) {
       return {
         ...state,
         paginationFeed: action.payload.data,
+      };
+    }
+
+    case ACTIONS.ACTION_SET_SCROLL_TOP: {
+      return {
+        ...state,
+        scrollTop: action.payload.data,
       };
     }
 

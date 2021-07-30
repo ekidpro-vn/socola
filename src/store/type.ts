@@ -37,4 +37,5 @@ export interface State {
   uploadImages: UploadImage[];
   props: SetProps;
   paginationFeed: PaginationFeed;
+  scrollTop?: boolean;
 }
