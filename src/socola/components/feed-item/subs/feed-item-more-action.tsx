@@ -2,9 +2,9 @@ import axios from 'axios';
 import clsx from 'clsx';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { SECRET_KEY } from '../../../../config/index';
+import { toast } from 'react-toastify';
 import { setNewFeeds } from '../../../../store/action';
-import { getFeeds } from '../../../../utils/helper';
+import { getFeeds, getProps } from '../../../../utils/helper';
 
 const source = axios.CancelToken.source();
 
@@ -15,11 +15,13 @@ export const FeedItemMoreAction: React.FC<{ ID: number; onTurnOnEditMode: () => 
   const [showFeedActions, setShowFeedActions] = useState<boolean>(false);
   const dispatch = useDispatch();
   const feeds = useSelector(getFeeds);
+  const dataProps = useSelector(getProps);
+  const { secretKey } = dataProps;
 
   const onDeleteFeed = useCallback(() => {
     const formData = new FormData();
     formData.set('feedid', `${ID}`);
-    formData.set('secretkey', SECRET_KEY);
+    formData.set('secretkey', secretKey);
 
     axios
       .post('/api/feed/deletefeed', formData, {
@@ -34,12 +36,17 @@ export const FeedItemMoreAction: React.FC<{ ID: number; onTurnOnEditMode: () => 
         const newFeeds = feeds.filter((item) => item.ID !== ID);
         dispatch(setNewFeeds(newFeeds));
       })
-      .catch((error) => console.log(error.message));
+      .catch((error) => {
+        if (axios.isCancel(error)) {
+          return;
+        }
+        toast.error(error.message, { autoClose: false });
+      });
 
     return () => {
       source.cancel('Canceled by the user');
     };
-  }, [ID, dispatch, feeds]);
+  }, [ID, dispatch, feeds, secretKey]);
 
   return (
     <div className="feed-actions flex-col md:flex-row flex items-center md:justify-center flex-wrap">

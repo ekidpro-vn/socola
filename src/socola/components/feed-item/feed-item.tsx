@@ -6,9 +6,10 @@ import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { FeedType } from 'types/feed';
-import { SECRET_KEY } from '../../../config';
+import { SOCOLA_AVATAR_URL } from '../../../config/index';
 import { setNewFeeds } from '../../../store/action';
 import { getDisplayTime, getFeeds, getProps } from '../../../utils/helper';
+import { getTransformFeed } from '../../../utils/transform-data';
 import { FeedItemStyle } from './feed-item.style';
 import { FeedItemImage } from './subs/feed-item-image';
 import { FeedItemMoreAction } from './subs/feed-item-more-action';
@@ -18,7 +19,7 @@ const source = axios.CancelToken.source();
 
 export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
   const dataProps = useSelector(getProps);
-  const { readOnly, userInfo, renderType } = dataProps;
+  const { readOnly, userInfo, renderType, secretKey } = dataProps;
   const [showReplyInput, setShowReplyInput] = useState<boolean>(false);
   const [valueReplyInput, setValueReplyInput] = useState<string>('');
   const [editMode, setEditMode] = useState<boolean>(false);
@@ -70,7 +71,12 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
           });
           dispatch(setNewFeeds(newFeeds));
         })
-        .catch((error) => toast.error(error.message, { autoClose: false }));
+        .catch((error) => {
+          if (axios.isCancel(error)) {
+            return;
+          }
+          toast.error(error.message, { autoClose: false });
+        });
 
       return () => {
         source.cancel('Canceled by the user');
@@ -107,7 +113,12 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
           });
           dispatch(setNewFeeds(newFeeds));
         })
-        .catch((error) => toast.error(error.message, { autoClose: false }));
+        .catch((error) => {
+          if (axios.isCancel(error)) {
+            return;
+          }
+          toast.error(error.message, { autoClose: false });
+        });
 
       return () => {
         source.cancel('Canceled by the user');
@@ -120,7 +131,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
     const formData = new FormData();
     formData.set('content', valueInputFeed.trim());
     formData.set('feedid', `${ID}`);
-    formData.set('secretkey', SECRET_KEY);
+    formData.set('secretkey', secretKey);
 
     axios
       .post('/api/feed/editfeed', formData, {
@@ -132,15 +143,21 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
           throw new Error(message || 'Edit failed');
         }
         setEditMode(false);
-        const newFeeds = [feeddata, ...feeds];
+        const transformFeedData = getTransformFeed(feeddata);
+        const newFeeds = [transformFeedData, ...feeds];
         dispatch(setNewFeeds(newFeeds));
       })
-      .catch((error) => toast.error(error.message, { autoClose: false }));
+      .catch((error) => {
+        if (axios.isCancel(error)) {
+          return;
+        }
+        toast.error(error.message, { autoClose: false });
+      });
 
     return () => {
       source.cancel('Canceled by the user');
     };
-  }, [valueInputFeed, ID, dispatch, feeds]);
+  }, [valueInputFeed, ID, dispatch, feeds, secretKey]);
 
   if (renderType === 'minimum') {
     return (
@@ -160,10 +177,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
   return (
     <FeedItemStyle className="mt-10">
       <div className="flex items-start justify-between">
-        <img
-          src={`http://socola.apax.online/api/avatar/view?cid=ekidpro&uid=${UserID}`}
-          className="w-10 h-10 rounded-full"
-        />
+        <img src={`${SOCOLA_AVATAR_URL}&uid=${UserID}`} className="w-10 h-10 rounded-full" />
         <div className="ml-4 w-full">
           <div className="flex items-center one-primary-feed duration-300">
             <div
@@ -229,7 +243,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
 
           <div className="sm:flex sm:items-center mt-1.5">
             <div className="flex items-center">
-              {isLike ? (
+              {isLike && (
                 <>
                   {LikesCount > 0 && <span className="block mr-0.5">{LikesCount}</span>}
                   <button
@@ -246,7 +260,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
                     </svg>
                   </button>
                 </>
-              ) : null}
+              )}
 
               {CommentCount > 0 && <span className="block mr-0.5">{CommentCount}</span>}
 

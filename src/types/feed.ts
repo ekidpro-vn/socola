@@ -14,7 +14,7 @@ export interface SubFeedType {
 
 export interface FeedType {
   ChannelID: string | null;
-  ClientID: string;
+  // ClientID: string;
   CommentCount: number;
   Comments: Record<string, SubFeedType> | [];
   Content: {
@@ -27,26 +27,26 @@ export interface FeedType {
       url: string;
     }[];
   };
-  ConvoID: string;
-  Department: string;
-  DeptID: number;
+  // ConvoID: string;
+  // Department: string;
+  // DeptID: number;
   FeedKey: string;
   ID: number;
-  IP: string;
-  LastUpdated: number;
+  // IP: string;
+  // LastUpdated: number;
   LikesCount: number;
-  Location: string;
+  // Location: string;
   ModuleID: string | null;
   PostedAt: number;
-  Rating: null;
+  // Rating: null;
   RecordID: string | null;
-  RecordTitle: null;
-  Status: null;
-  ToUserID: string;
-  TypeID: number;
+  // RecordTitle: null;
+  // Status: null;
+  // ToUserID: string;
+  // TypeID: number;
   UserFullName: string;
   UserID: string;
-  isDeleted: number;
+  // isDeleted: number;
   isLike: number;
   isPublic: number;
   isYouLiked: boolean;

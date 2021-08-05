@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { SubFeedType } from 'types/feed';
 import { LoadingSeemMoreIcon } from '../../../../assets/loading-see-more';
+import { SOCOLA_AVATAR_URL } from '../../../../config/index';
 import { setNewFeeds } from '../../../../store/action';
 import { getDisplayTime, getFeeds, getProps } from '../../../../utils/helper';
 
@@ -58,7 +59,12 @@ export const FeedItemReply: React.FC<{
           });
           dispatch(setNewFeeds(newFeeds));
         })
-        .catch((error) => toast.error(error.message, { autoClose: false }));
+        .catch((error) => {
+          if (axios.isCancel(error)) {
+            return;
+          }
+          toast.error(error.message, { autoClose: false });
+        });
 
       return () => {
         source.cancel('Canceled by the user');
@@ -93,6 +99,9 @@ export const FeedItemReply: React.FC<{
         setPageSeeMore(pageSeeMore + 1);
       })
       .catch((error) => {
+        if (axios.isCancel(error)) {
+          return;
+        }
         toast.error(error.message, { autoClose: false });
         setLoading(false);
       });
@@ -113,10 +122,7 @@ export const FeedItemReply: React.FC<{
 
         return (
           <div className="flex items-start mt-4" key={`${UserID}_${index}`}>
-            <img
-              src={`http://socola.apax.online/api/avatar/view?cid=ekidpro&uid=${UserID}`}
-              className="w-8 h-8 rounded-full"
-            />
+            <img src={`${SOCOLA_AVATAR_URL}&uid=${UserID}`} className="w-8 h-8 rounded-full" />
             <div className="ml-4">
               <div className="bg-gray-100 px-4 py-2 rounded-lg">
                 <div>

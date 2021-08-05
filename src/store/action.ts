@@ -2,6 +2,7 @@ import axios from 'axios';
 import { Dispatch } from 'react';
 import { toast } from 'react-toastify';
 import { FeedType } from '../types/feed';
+import { getTransformFeeds } from '../utils/transform-data';
 import { PaginationFeed, SetProps, UploadImage } from './type';
 
 const source = axios.CancelToken.source();
@@ -46,7 +47,8 @@ export const getFeedsFromApi = (moduleId?: string, recordId?: string, channelId?
         if (!success || response.status > 400) {
           throw new Error(message || 'Get feed list fail!');
         }
-        dispatch(getFeedsFromApiSuccess(feeds));
+        const transformFeeds = getTransformFeeds(feeds);
+        dispatch(getFeedsFromApiSuccess(transformFeeds));
         const totalItems = Number(total);
         const size = 10;
         const totalPages = totalItems % size === 0 ? totalItems / size : Math.ceil(totalItems / size);
@@ -59,7 +61,12 @@ export const getFeedsFromApi = (moduleId?: string, recordId?: string, channelId?
           })
         );
       })
-      .catch((error) => toast.error(error.message, { autoClose: false }));
+      .catch((error) => {
+        if (axios.isCancel(error)) {
+          return;
+        }
+        toast.error(error.message, { autoClose: false });
+      });
 
     return () => {
       source.cancel('Canceled by the user');

@@ -14,7 +14,9 @@ export const FeedList: React.FC = () => {
   const pagination = useSelector(getPaginationFeed);
 
   useEffect(() => {
-    dispatch(getFeedsFromApi(moduleId, recordId, channelId));
+    if (moduleId) {
+      dispatch(getFeedsFromApi(moduleId, recordId, channelId));
+    }
   }, [moduleId, channelId, recordId, dispatch]);
 
   if (!feeds) {

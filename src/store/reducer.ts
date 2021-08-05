@@ -22,6 +22,7 @@ export const initialState: State = {
       id: 0,
       role: '',
     },
+    secretKey: '',
   },
   paginationFeed: {
     totalItems: 0,

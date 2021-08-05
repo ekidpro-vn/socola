@@ -21,6 +21,7 @@ export interface SetProps {
     id: number;
     role: string;
   };
+  secretKey?: string;
 }
 
 export interface PaginationFeed {

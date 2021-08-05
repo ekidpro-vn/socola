@@ -10,9 +10,9 @@ import { toast } from 'react-toastify';
 import { v4 as uuid } from 'uuid';
 import { LoadingIcon } from '../../../assets/loading';
 import { SendIcon } from '../../../assets/send-icon';
-import { SECRET_KEY } from '../../../config';
 import { removeAllUploadImage, removeUploadImage, setNewFeeds, setNewUploadImage } from '../../../store/action';
 import { base64ToBlob, getDataDropdown, getFeeds, getProps, getUploadImages } from '../../../utils/helper';
+import { getTransformFeed } from '../../../utils/transform-data';
 import { Camera } from '../camera';
 import { optionsStatus } from './editor.data';
 import { EditorStyle } from './editor.style';
@@ -23,7 +23,7 @@ const MAX_AMOUNT_IMAGE_UPLOAD = 5;
 
 export const Editor: React.FC = () => {
   const dataProps = useSelector(getProps);
-  const { channelId, showDate, showStatus, statusOption, moduleId, recordId } = dataProps;
+  const { channelId, showDate, showStatus, statusOption, moduleId, recordId, secretKey } = dataProps;
   const [valueInput, setValueInput] = useState<string>('');
   const dispatch = useDispatch();
   const feeds = useSelector(getFeeds);
@@ -34,6 +34,14 @@ export const Editor: React.FC = () => {
   const [date, setDate] = useState<Date | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessageUpload, setErrorMessageUpload] = useState<string>('');
+
+  const resetInput = useCallback(() => {
+    setValueInput('');
+    setIsPublic(true);
+    setDate(null);
+    setStatus([]);
+    dispatch(removeAllUploadImage());
+  }, [dispatch]);
 
   const onPostValue = useCallback(() => {
     if (!valueInput || loading || errorMessageUpload) {
@@ -46,7 +54,7 @@ export const Editor: React.FC = () => {
     formData.set('content', valueInput.trim());
     formData.set('islike', '1');
     formData.set('ispublic', isPublic ? '1' : '0');
-    formData.set('secretkey', SECRET_KEY);
+    formData.set('secretkey', secretKey);
 
     if (channelId) {
       formData.set('channelid', channelId);
@@ -85,15 +93,15 @@ export const Editor: React.FC = () => {
           throw new Error(message || 'Post failed');
         }
         setLoading(false);
-        setValueInput('');
-        setIsPublic(true);
-        setDate(null);
-        setStatus([]);
-        dispatch(removeAllUploadImage());
-        const newFeeds = [feeddata, ...feeds];
+        resetInput();
+        const transformFeedData = getTransformFeed(feeddata);
+        const newFeeds = [transformFeedData, ...feeds];
         dispatch(setNewFeeds(newFeeds));
       })
       .catch((error) => {
+        if (axios.isCancel(error)) {
+          return;
+        }
         toast.error(error.message, { autoClose: false });
         setLoading(false);
       });
@@ -114,6 +122,8 @@ export const Editor: React.FC = () => {
     channelId,
     loading,
     errorMessageUpload,
+    secretKey,
+    resetInput,
   ]);
 
   const onUploadImages = useCallback(
