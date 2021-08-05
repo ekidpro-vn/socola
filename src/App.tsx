@@ -6,10 +6,10 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { applyMiddleware, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
+import { setupAxios } from './config/request';
 import { Socola } from './socola/socola';
 import { rootReducer } from './store/reducer';
 import { SocolaProps } from './types/socola';
-import { setupAxios } from './utils/setup-axios';
 
 const middleWare = applyMiddleware(thunkMiddleware);
 const store = createStore(rootReducer, middleWare);

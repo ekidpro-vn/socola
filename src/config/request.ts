@@ -1,10 +1,15 @@
 import axios from 'axios';
-import { SOCOLA_URL } from '../config';
+import { SOCOLA_URL } from './index';
 
-const source = axios.CancelToken.source();
+export const source = axios.CancelToken.source();
 
-export function setupAxios(socolaToken: string, apiDomain?: string) {
-  axios.interceptors.request.use(
+const request = axios.create({
+  timeout: 20000,
+  cancelToken: source.token,
+});
+
+export const setupAxios = (socolaToken: string, apiDomain?: string) => {
+  request.interceptors.request.use(
     (config) => {
       if (!config.url?.startsWith('https://')) {
         config.url = `${apiDomain || SOCOLA_URL}${config.url}`;
@@ -12,8 +17,6 @@ export function setupAxios(socolaToken: string, apiDomain?: string) {
           ...config.params,
           token: socolaToken,
         };
-        config.timeout = 20000; // 20s
-        config.cancelToken = source.token;
       }
 
       return config;
@@ -23,4 +26,6 @@ export function setupAxios(socolaToken: string, apiDomain?: string) {
       return Promise.reject(error);
     }
   );
-}
+};
+
+export default request;

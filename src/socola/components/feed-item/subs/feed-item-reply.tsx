@@ -6,10 +6,9 @@ import { toast } from 'react-toastify';
 import { SubFeedType } from 'types/feed';
 import { LoadingSeemMoreIcon } from '../../../../assets/loading-see-more';
 import { SOCOLA_AVATAR_URL } from '../../../../config/index';
+import request, { source } from '../../../../config/request';
 import { setNewFeeds } from '../../../../store/action';
 import { getDisplayTime, getFeeds, getProps } from '../../../../utils/helper';
-
-const source = axios.CancelToken.source();
 
 const LIMIT = 5;
 
@@ -33,7 +32,7 @@ export const FeedItemReply: React.FC<{
 
       const formData = new FormData();
       formData.set('commentkey', commentkey);
-      axios
+      request
         .post('/api/feed/likecomment', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
@@ -75,7 +74,7 @@ export const FeedItemReply: React.FC<{
 
   const onViewMore = useCallback(() => {
     setLoading(true);
-    axios
+    request
       .get('/api/feed/getcomments', {
         params: {
           feedkey,

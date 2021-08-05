@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { FeedType } from 'types/feed';
 import { SOCOLA_AVATAR_URL } from '../../../config/index';
+import request, { source } from '../../../config/request';
 import { setNewFeeds } from '../../../store/action';
 import { getDisplayTime, getFeeds, getProps } from '../../../utils/helper';
 import { getTransformFeed } from '../../../utils/transform-data';
@@ -14,8 +15,6 @@ import { FeedItemStyle } from './feed-item.style';
 import { FeedItemImage } from './subs/feed-item-image';
 import { FeedItemMoreAction } from './subs/feed-item-more-action';
 import { FeedItemReply } from './subs/feed-item-reply';
-
-const source = axios.CancelToken.source();
 
 export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
   const dataProps = useSelector(getProps);
@@ -52,7 +51,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
       formData.set('feedkey', feedkey);
       formData.set('comment', valueReplyInput.trim());
 
-      axios
+      request
         .post('/api/feed/comment', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
@@ -93,7 +92,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
 
       const formData = new FormData();
       formData.set('feedkey', feedkey);
-      axios
+      request
         .post('/api/feed/like', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
@@ -133,7 +132,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
     formData.set('feedid', `${ID}`);
     formData.set('secretkey', secretKey);
 
-    axios
+    request
       .post('/api/feed/editfeed', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })

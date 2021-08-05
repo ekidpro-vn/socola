@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Dispatch } from 'react';
 import { toast } from 'react-toastify';
+import request from '../config/request';
 import { FeedType } from '../types/feed';
 import { getTransformFeeds } from '../utils/transform-data';
 import { PaginationFeed, SetProps, UploadImage } from './type';
@@ -32,7 +33,7 @@ export const setPaginationFeed = (data: PaginationFeed) => {
 
 export const getFeedsFromApi = (moduleId?: string, recordId?: string, channelId?: string, page?: number) => {
   return (dispatch: Dispatch<unknown>) => {
-    axios
+    request
       .get('/api/feed/getfeeds', {
         params: {
           moduleid: moduleId,

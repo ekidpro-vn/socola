@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import { v4 as uuid } from 'uuid';
 import { LoadingIcon } from '../../../assets/loading';
 import { SendIcon } from '../../../assets/send-icon';
+import request, { source } from '../../../config/request';
 import { removeAllUploadImage, removeUploadImage, setNewFeeds, setNewUploadImage } from '../../../store/action';
 import { base64ToBlob, getDataDropdown, getFeeds, getProps, getUploadImages } from '../../../utils/helper';
 import { getTransformFeed } from '../../../utils/transform-data';
@@ -17,7 +18,6 @@ import { Camera } from '../camera';
 import { optionsStatus } from './editor.data';
 import { EditorStyle } from './editor.style';
 
-const source = axios.CancelToken.source();
 const MAX_CAPACITY_ONE_IMAGE_UPLOAD = 2000000; // 2MB
 const MAX_AMOUNT_IMAGE_UPLOAD = 5;
 
@@ -81,7 +81,7 @@ export const Editor: React.FC = () => {
       }
     }
 
-    axios
+    request
       .post('/api/feed/newfeed', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',

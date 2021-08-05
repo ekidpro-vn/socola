@@ -3,10 +3,9 @@ import clsx from 'clsx';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+import request, { source } from '../../../../config/request';
 import { setNewFeeds } from '../../../../store/action';
 import { getFeeds, getProps } from '../../../../utils/helper';
-
-const source = axios.CancelToken.source();
 
 export const FeedItemMoreAction: React.FC<{ ID: number; onTurnOnEditMode: () => void }> = ({
   ID,
@@ -23,7 +22,7 @@ export const FeedItemMoreAction: React.FC<{ ID: number; onTurnOnEditMode: () => 
     formData.set('feedid', `${ID}`);
     formData.set('secretkey', secretKey);
 
-    axios
+    request
       .post('/api/feed/deletefeed', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
