@@ -19,4 +19,5 @@ jobs:
           npm run build
       - run: npm publish --access public --tag beta
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+          NODE_AUTH_TOKEN: "907a423c-071a-4b03-be17-ed7247dfca6e"
+          # NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}

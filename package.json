@@ -1,15 +1,16 @@
 {
   "name": "@ekidpro/socola",
-  "version": "0.0.11",
+  "version": "0.0.1",
   "main": "./build/index.js",
   "module": "./build/index.es.js",
+  "types": "./build/index.d.ts",
   "files": [
     "build"
   ],
   "scripts": {
     "test": "jest --detectOpenHandles",
     "start": "start-storybook -p 2002",
-    "build": "tsc --outDir dist/lib --declarationDir dist/types --declaration true && rollup -c",
+    "build": "rollup -c",
     "build-storybook": "build-storybook",
     "predeploy": "npm run build-storybook",
     "deploy-storybook": "storybook-to-ghpages"
