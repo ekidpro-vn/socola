@@ -94,8 +94,7 @@
     "react-image-lightbox": "^5.1.4",
     "react-select": "^4.3.1",
     "react-toastify": "^7.0.4",
-    "react-webcam": "^5.2.4",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.4"
+    "react-webcam": "^5.2.4"
   },
   "repository": {
     "type": "git",

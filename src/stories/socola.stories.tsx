@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
-import 'tailwindcss/tailwind.css';
 import Socola from '../App';
+import '../styles/tailwind.css';
 
 export default {
   title: 'Socola',
