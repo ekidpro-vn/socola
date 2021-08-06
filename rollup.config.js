@@ -2,6 +2,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import image from '@rollup/plugin-image';
 import json from '@rollup/plugin-json';
 import resolve from '@rollup/plugin-node-resolve';
+import css from 'rollup-plugin-import-css';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import typescript from 'rollup-plugin-typescript2';
 import packageJson from './package.json';
@@ -27,5 +28,6 @@ export default {
     typescript({ useTsconfigDeclarationDir: true }),
     image(),
     json(),
+    css(),
   ],
 };
