@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { applyMiddleware, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import { setupAxios } from './config/request';
-import { Socola } from './socola/socola';
+import { SocolaComponent } from './socola/socola';
 import { rootReducer } from './store/reducer';
 import './styles/tailwind.css';
 import { SocolaProps } from './types/socola';
@@ -15,7 +15,7 @@ import { SocolaProps } from './types/socola';
 const middleWare = applyMiddleware(thunkMiddleware);
 const store = createStore(rootReducer, middleWare);
 
-const App: React.FC<SocolaProps> = (props) => {
+export function Socola(props: SocolaProps): JSX.Element {
   const { socolaToken, apiDomain } = props;
 
   useEffect(() => {
@@ -26,7 +26,7 @@ const App: React.FC<SocolaProps> = (props) => {
 
   return (
     <Provider store={store}>
-      <Socola {...props} />
+      <SocolaComponent {...props} />
       <ToastContainer
         position="top-right"
         autoClose={5000}
@@ -40,6 +40,4 @@ const App: React.FC<SocolaProps> = (props) => {
       />
     </Provider>
   );
-};
-
-export default App;
+}

@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
-import Socola from '../App';
+import { Socola } from '../App';
 import '../styles/tailwind.css';
 
 export default {
