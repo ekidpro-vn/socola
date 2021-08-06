@@ -175,9 +175,9 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
 
   return (
     <FeedItemStyle className="mt-10">
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between overflow-hidden">
         <img src={`${SOCOLA_AVATAR_URL}&uid=${UserID}`} className="w-10 h-10 rounded-full" />
-        <div className="ml-4 w-full">
+        <div className="wrap-image-more-action ml-4">
           <div className="flex items-center one-primary-feed duration-300">
             <div
               className={clsx({
@@ -186,7 +186,12 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
                 'w-max-content': !editMode,
               })}
             >
-              <span className="font-semibold block text-blue-800">{UserFullName}</span>
+              <div className="flex items-center justify-start">
+                <span className="font-semibold block text-blue-800 whitespace-nowrap">{UserFullName}</span>
+                <span className="block opacity-70 text-sm whitespace-nowrap ml-4 mt-px">
+                  {getDisplayTime(PostedAt * 1000)}
+                </span>
+              </div>
               <div
                 className={clsx({
                   'flex justify-between': true,
@@ -240,7 +245,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
             )}
           </div>
 
-          <div className="sm:flex sm:items-center mt-1.5">
+          <div className="inline-block md:flex md:items-center mt-1.5">
             <div className="flex items-center">
               {isLike && (
                 <>
@@ -280,10 +285,8 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
                   />
                 </svg>
               </button>
-
-              <span className="block opacity-70 text-sm whitespace-nowrap">{getDisplayTime(PostedAt * 1000)}</span>
             </div>
-            <div className="sm:flex sm:items-center sm:ml-3 mt-3 sm:mt-0 float-left grid grid-cols-2 gap-x-3 gap-y-2 sm:gap-0">
+            <div className="sm:flex sm:items-center sm:ml-1 mt-3 sm:mt-0 float-left grid grid-cols-2 gap-x-3 gap-y-2 sm:gap-0">
               {Content.date && (
                 <div className="flex px-2 py-0.5 rounded-2xl bg-blue-600 items-center mr-3 col-span-1">
                   <span className="text-white mr-1">

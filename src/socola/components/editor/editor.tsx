@@ -196,6 +196,7 @@ export const Editor: React.FC = () => {
           value={valueInput}
           placeholder="Create new post..."
           rows={3}
+          disabled={loading}
           onChange={(e) => setValueInput(e.target.value)}
           className="w-full flex-1 flex items-center rounded py-2 overflow-hidden border px-3 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:border-blue-600 focus:outline-none"
         />
@@ -245,7 +246,7 @@ export const Editor: React.FC = () => {
       <div className="mt-5">
         <div className="sm:flex sm:items-center w-full">
           <div className="flex items-center sm:mr-3 justify-center">
-            <button className="hover:bg-indigo-50 duration-300 rounded w-10 h-10 text-gray-500 mr-2">
+            <button disabled={loading} className="hover:bg-indigo-50 duration-300 rounded w-10 h-10 text-gray-500 mr-2">
               <label htmlFor="file-input" className="w-full h-full flex justify-center items-center cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path
@@ -270,6 +271,7 @@ export const Editor: React.FC = () => {
             </button>
 
             <button
+              disabled={loading}
               onClick={() => setShowModalCamera(true)}
               className="hover:bg-indigo-50 duration-300 rounded w-10 h-10 flex justify-center items-center text-gray-500 mr-4"
             >
@@ -285,6 +287,7 @@ export const Editor: React.FC = () => {
             <div className="h-10 flex items-center">
               <input
                 type="checkbox"
+                disabled={loading}
                 className="form-checkbox h-4 w-4 text-gray-600 block mr-1"
                 checked={isPublic}
                 onChange={(e) => setIsPublic(e.target.checked)}
@@ -296,6 +299,7 @@ export const Editor: React.FC = () => {
             {showDate && (
               <div className="mr-3 w-full sm:w-auto mb-3 sm:mb-0">
                 <DatePicker
+                  disabled={loading}
                   dateFormat="dd/MM/yyyy"
                   placeholderText="Milestone"
                   wrapperClassName="w-full"
@@ -309,6 +313,7 @@ export const Editor: React.FC = () => {
             {showStatus && (
               <div className="sm:w-48">
                 <Select
+                  isDisabled={loading}
                   options={statusOption || optionsStatus}
                   isMulti
                   value={status}
@@ -321,6 +326,7 @@ export const Editor: React.FC = () => {
         </div>
         <div className="flex justify-end mt-3">
           <button
+            disabled={loading}
             onClick={onPostValue}
             className={clsx({
               'bg-green-600 text-white px-4 py-2 rounded duration-300 flex items-center justify-center': true,

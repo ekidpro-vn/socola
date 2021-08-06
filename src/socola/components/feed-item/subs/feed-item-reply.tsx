@@ -115,7 +115,7 @@ export const FeedItemReply: React.FC<{
   }
 
   return (
-    <div className="sm:pr-10">
+    <div className="md:pr-10">
       {Object.entries(Comments).map((item, index) => {
         const { UserFullName, Comment, PostedAt, UserID, isYouLiked, CommentKey, LikesCount } = item[1];
 
@@ -125,7 +125,9 @@ export const FeedItemReply: React.FC<{
             <div className="ml-4">
               <div className="bg-gray-100 px-4 py-2 rounded-lg">
                 <div>
-                  <span className="font-semibold mr-2 text-blue-800 block text-reply">{UserFullName}</span>
+                  <span className="font-semibold mr-2 text-blue-800 block text-reply whitespace-nowrap">
+                    {UserFullName}
+                  </span>
                   <span className="block text-reply">
                     {Comment.split('<br />').map((item, index) => {
                       return (
