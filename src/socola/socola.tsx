@@ -6,7 +6,7 @@ import { getScrollTop } from '../utils/helper';
 import { Editor } from './components/editor';
 import { FeedList } from './components/feed-list/feed-list';
 
-export const Socola: React.FC<SocolaProps> = (props) => {
+export const SocolaComponent: React.FC<SocolaProps> = (props) => {
   const dispatch = useDispatch();
   const socolaRef = useRef<HTMLDivElement>(null);
   const scrollTop = useSelector(getScrollTop);
@@ -25,7 +25,7 @@ export const Socola: React.FC<SocolaProps> = (props) => {
   return (
     <div ref={socolaRef}>
       {!props.readOnly && <Editor />}
-      <div className="mx-2">
+      <div className="sm:mx-2">
         <FeedList />
       </div>
     </div>

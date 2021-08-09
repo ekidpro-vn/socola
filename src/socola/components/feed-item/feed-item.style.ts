@@ -31,9 +31,21 @@ export const FeedItemStyle = styled.div`
     }
   }
 
-  @media (min-width: 577px) {
+  @media (min-width: 1920px) {
+    .wrap-image-more-action {
+      width: 95%;
+    }
+  }
+
+  @media only screen and (min-width: 577px) and (max-width: 1365px) {
     .wrap-image-more-action {
       width: 91%;
+    }
+  }
+
+  @media only screen and (min-width: 1366px) and (max-width: 1919px) {
+    .wrap-image-more-action {
+      width: 93%;
     }
   }
 

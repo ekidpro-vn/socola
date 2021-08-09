@@ -16,7 +16,7 @@ export interface SocolaProps {
   renderType?: 'minimum' | 'social' | 'note';
   userInfo?: {
     id: number;
-    role: string;
+    type: string;
   };
   apiDomain?: string;
 }

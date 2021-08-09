@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
-import Socola from '../App';
+import { Socola } from '../App';
 import '../styles/tailwind.css';
 
 export default {
@@ -27,7 +27,7 @@ DefaultSocola.args = {
   // socolaToken: '',
   userInfo: {
     id: 16820,
-    role: 'ADMIN',
+    type: 'ADMIN',
   },
   // renderType: 'minimum',
 };

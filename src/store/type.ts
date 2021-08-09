@@ -19,7 +19,7 @@ export interface SetProps {
   renderType?: 'minimum' | 'social' | 'note';
   userInfo?: {
     id: number;
-    role: string;
+    type: string;
   };
   secretKey?: string;
 }
