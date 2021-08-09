@@ -27,7 +27,7 @@ DefaultSocola.args = {
   // socolaToken: '',
   userInfo: {
     id: 16820,
-    role: 'ADMIN',
+    type: 'ADMIN',
   },
   // renderType: 'minimum',
 };

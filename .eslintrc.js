@@ -33,6 +33,7 @@ module.exports = {
     '@typescript-eslint/no-use-before-define': ['error'],
     camelcase: 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-var-requires': 'off',
   },
   settings: {
     react: {

@@ -14,7 +14,7 @@ import { Socola } from '@ekidpro/socola';
   showStatus // optional
   userInfo={{ // optional
     id: 1,
-    role: 'ADMIN',
+    type: 'ADMIN',
   }}
 />
 ```

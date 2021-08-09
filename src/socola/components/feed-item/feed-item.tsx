@@ -40,7 +40,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
   const dispatch = useDispatch();
   const feeds = useSelector(getFeeds);
 
-  const permisionEditFeed = userInfo?.id === Number(UserID) || userInfo?.role === 'ADMIN';
+  const permisionEditFeed = userInfo?.id === Number(UserID) || userInfo?.type === 'ADMIN';
 
   const onReplyComment = useCallback(
     (feedkey: string) => {

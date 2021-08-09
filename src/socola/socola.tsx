@@ -25,7 +25,7 @@ export const SocolaComponent: React.FC<SocolaProps> = (props) => {
   return (
     <div ref={socolaRef}>
       {!props.readOnly && <Editor />}
-      <div className="mx-2">
+      <div className="sm:mx-2">
         <FeedList />
       </div>
     </div>

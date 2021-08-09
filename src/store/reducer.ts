@@ -20,7 +20,7 @@ export const initialState: State = {
     renderType: 'social',
     userInfo: {
       id: 0,
-      role: '',
+      type: '',
     },
     secretKey: '',
   },
