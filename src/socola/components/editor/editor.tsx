@@ -1,12 +1,11 @@
-import { Modal } from '@ekidpro/ui';
+import { Modal } from '@ekidpro/ui.modal';
 import axios from 'axios';
 import clsx from 'clsx';
+import dayjs from 'dayjs';
 import { isEmpty } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
-import DatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
-import { toast } from 'react-toastify';
 import { v4 as uuid } from 'uuid';
 import { LoadingIcon } from '../../../assets/loading';
 import { SendIcon } from '../../../assets/send-icon';
@@ -23,7 +22,7 @@ const MAX_AMOUNT_IMAGE_UPLOAD = 5;
 
 export const Editor: React.FC = () => {
   const dataProps = useSelector(getProps);
-  const { channelId, showDate, showStatus, statusOption, moduleId, recordId, secretKey } = dataProps;
+  const { channelId, showDate, showStatus, statusOption, moduleId, recordId, secretKey, onError } = dataProps;
   const [valueInput, setValueInput] = useState<string>('');
   const dispatch = useDispatch();
   const feeds = useSelector(getFeeds);
@@ -34,11 +33,13 @@ export const Editor: React.FC = () => {
   const [date, setDate] = useState<Date | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessageUpload, setErrorMessageUpload] = useState<string>('');
+  const [dateInputType, setDateInputType] = useState<'text' | 'date'>('text');
 
   const resetInput = useCallback(() => {
     setValueInput('');
     setIsPublic(true);
     setDate(null);
+    setDateInputType('text');
     setStatus([]);
     dispatch(removeAllUploadImage());
   }, [dispatch]);
@@ -102,7 +103,7 @@ export const Editor: React.FC = () => {
         if (axios.isCancel(error)) {
           return;
         }
-        toast.error(error.message, { autoClose: false });
+        onError(error.message);
         setLoading(false);
       });
 
@@ -124,6 +125,7 @@ export const Editor: React.FC = () => {
     errorMessageUpload,
     secretKey,
     resetInput,
+    onError,
   ]);
 
   const onUploadImages = useCallback(
@@ -188,6 +190,12 @@ export const Editor: React.FC = () => {
       }
     }
   }, [uploadImages]);
+
+  useEffect(() => {
+    if (dateInputType === 'date') {
+      console.clear();
+    }
+  }, [dateInputType]);
 
   return (
     <EditorStyle>
@@ -297,17 +305,25 @@ export const Editor: React.FC = () => {
           </div>
           <div className="sm:flex sm:items-center mt-4 sm:mt-0">
             {showDate && (
-              <div className="mr-3 w-full sm:w-auto mb-3 sm:mb-0">
-                <DatePicker
-                  disabled={loading}
-                  dateFormat="dd/MM/yyyy"
-                  placeholderText="Milestone"
-                  wrapperClassName="w-full"
-                  popperClassName="w-full sm:w-auto"
-                  selected={date}
-                  onChange={(e: Date | null) => setDate(e)}
-                  className="focus:outline-none border w-full sm:w-auto border-gray-300 focus:border-blue-500 px-3 py-1.5 rounded"
-                />
+              <div className="mr-3 w-full sm:w-48 mb-3 sm:mb-0">
+                {dateInputType === 'text' ? (
+                  <input
+                    type="text"
+                    className="focus:outline-none border w-full border-gray-300 focus:border-blue-500 px-3 py-1.5 rounded"
+                    value=""
+                    readOnly
+                    placeholder="Milestone"
+                    onFocus={() => setDateInputType('date')}
+                    disabled={loading}
+                  />
+                ) : (
+                  <input
+                    type="date"
+                    onChange={(e) => setDate(dayjs(e.target.value).toDate())}
+                    disabled={loading}
+                    className="focus:outline-none border w-full border-gray-300 focus:border-blue-500 px-3 py-1.5 rounded"
+                  />
+                )}
               </div>
             )}
             {showStatus && (

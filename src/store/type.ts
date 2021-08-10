@@ -22,6 +22,8 @@ export interface SetProps {
     type: string;
   };
   secretKey?: string;
+  onError?: (e: string) => void;
+  onShowImageFeed?: (src: string, index: number) => void;
 }
 
 export interface PaginationFeed {

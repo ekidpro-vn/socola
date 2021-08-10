@@ -19,4 +19,6 @@ export interface SocolaProps {
     type: string;
   };
   apiDomain?: string;
+  onError?: (e: string) => void;
+  onShowImageFeed?: (src: string, index: number) => void;
 }

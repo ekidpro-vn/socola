@@ -1,10 +1,10 @@
 import axios from 'axios';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
+import LocalizedFormat from 'dayjs/plugin/localizedFormat';
 import { upperFirst } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
 import { FeedType } from 'types/feed';
 import { SOCOLA_AVATAR_URL } from '../../../config/index';
 import request, { source } from '../../../config/request';
@@ -16,9 +16,11 @@ import { FeedItemImage } from './subs/feed-item-image';
 import { FeedItemMoreAction } from './subs/feed-item-more-action';
 import { FeedItemReply } from './subs/feed-item-reply';
 
+dayjs.extend(LocalizedFormat);
+
 export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
   const dataProps = useSelector(getProps);
-  const { readOnly, userInfo, renderType, secretKey } = dataProps;
+  const { readOnly, userInfo, renderType, secretKey, onError } = dataProps;
   const [showReplyInput, setShowReplyInput] = useState<boolean>(false);
   const [valueReplyInput, setValueReplyInput] = useState<string>('');
   const [editMode, setEditMode] = useState<boolean>(false);
@@ -74,14 +76,14 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
           if (axios.isCancel(error)) {
             return;
           }
-          toast.error(error.message, { autoClose: false });
+          onError(error.message);
         });
 
       return () => {
         source.cancel('Canceled by the user');
       };
     },
-    [valueReplyInput, dispatch, feeds]
+    [valueReplyInput, dispatch, feeds, onError]
   );
 
   const onLikeComment = useCallback(
@@ -116,14 +118,14 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
           if (axios.isCancel(error)) {
             return;
           }
-          toast.error(error.message, { autoClose: false });
+          onError(error.message);
         });
 
       return () => {
         source.cancel('Canceled by the user');
       };
     },
-    [dispatch, feeds, readOnly]
+    [dispatch, feeds, readOnly, onError]
   );
 
   const onEditFeed = useCallback(() => {
@@ -150,13 +152,13 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
         if (axios.isCancel(error)) {
           return;
         }
-        toast.error(error.message, { autoClose: false });
+        onError(error.message);
       });
 
     return () => {
       source.cancel('Canceled by the user');
     };
-  }, [valueInputFeed, ID, dispatch, feeds, secretKey]);
+  }, [valueInputFeed, ID, dispatch, feeds, secretKey, onError]);
 
   if (renderType === 'minimum') {
     return (
@@ -305,7 +307,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
                       />
                     </svg>
                   </span>
-                  <span className="text-sm text-white">{dayjs(Content.date).format('DD/MM/YYYY')}</span>
+                  <span className="text-sm text-white">{dayjs(Content.date).format('ll')}</span>
                 </div>
               )}
               {Content.status &&

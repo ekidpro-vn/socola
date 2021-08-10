@@ -9,13 +9,7 @@ import { Socola } from '@ekidpro/socola';
   moduleId="your_module_id"
   secretKey="your_secret_key"
   socolaToken="your_token"
-  recordId="your_record_id" // optional
-  showDate // optional
-  showStatus // optional
-  userInfo={{ // optional
-    id: 1,
-    type: 'ADMIN',
-  }}
+  // and another optional props
 />
 ```
 

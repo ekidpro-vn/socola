@@ -1,14 +1,11 @@
 import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
-import { ToastContainer } from 'react-toastify';
 import { applyMiddleware, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import { setupAxios } from './config/request';
 import { SocolaComponent } from './socola/socola';
 import { rootReducer } from './store/reducer';
 import './styles/react-datepicker.css';
-import './styles/react-image-light-box.css';
-import './styles/ReactToastify.css';
 import './styles/tailwind.css';
 import { SocolaProps } from './types/socola';
 
@@ -26,20 +23,7 @@ export function Socola(props: SocolaProps): JSX.Element {
 
   return (
     <Provider store={store}>
-      <div>
-        <SocolaComponent {...props} />
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={true}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
-      </div>
+      <SocolaComponent {...props} />
     </Provider>
   );
 }

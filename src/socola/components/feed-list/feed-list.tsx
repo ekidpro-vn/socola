@@ -8,16 +8,16 @@ import { Pagination } from '../pagination/pagination';
 
 export const FeedList: React.FC = () => {
   const dataProps = useSelector(getProps);
-  const { moduleId, channelId, recordId } = dataProps;
+  const { moduleId, channelId, recordId, onError } = dataProps;
   const dispatch = useDispatch();
   const feeds = useSelector(getFeeds);
   const pagination = useSelector(getPaginationFeed);
 
   useEffect(() => {
     if (moduleId) {
-      dispatch(getFeedsFromApi(moduleId, recordId, channelId));
+      dispatch(getFeedsFromApi(moduleId, recordId, channelId, undefined, onError));
     }
-  }, [moduleId, channelId, recordId, dispatch]);
+  }, [moduleId, channelId, recordId, dispatch, onError]);
 
   if (!feeds) {
     return (

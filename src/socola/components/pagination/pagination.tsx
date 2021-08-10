@@ -19,39 +19,39 @@ export const Pagination: React.FC<PaginationProps> = (props) => {
   const { page, totalPages } = props.pagination;
   const dispatch = useDispatch();
   const dataProps = useSelector(getProps);
-  const { moduleId, recordId, channelId } = dataProps;
+  const { moduleId, recordId, channelId, onError } = dataProps;
 
   const onNextLastPage = useCallback(() => {
     if (page === totalPages) {
       return;
     }
-    dispatch(getFeedsFromApi(moduleId, recordId, channelId, totalPages));
+    dispatch(getFeedsFromApi(moduleId, recordId, channelId, totalPages, onError));
     dispatch(setScrollTop(true));
-  }, [page, totalPages, channelId, recordId, moduleId, dispatch]);
+  }, [page, totalPages, channelId, recordId, moduleId, dispatch, onError]);
 
   const onPrevFirstPage = useCallback(() => {
     if (page === 1) {
       return;
     }
-    dispatch(getFeedsFromApi(moduleId, recordId, channelId, 1));
+    dispatch(getFeedsFromApi(moduleId, recordId, channelId, 1, onError));
     dispatch(setScrollTop(true));
-  }, [page, channelId, recordId, moduleId, dispatch]);
+  }, [page, channelId, recordId, moduleId, dispatch, onError]);
 
   const onNextPage = useCallback(() => {
     if (page >= totalPages) {
       return;
     }
-    dispatch(getFeedsFromApi(moduleId, recordId, channelId, page + 1));
+    dispatch(getFeedsFromApi(moduleId, recordId, channelId, page + 1, onError));
     dispatch(setScrollTop(true));
-  }, [page, totalPages, channelId, recordId, moduleId, dispatch]);
+  }, [page, totalPages, channelId, recordId, moduleId, dispatch, onError]);
 
   const onPrevPage = useCallback(() => {
     if (page <= 1) {
       return;
     }
-    dispatch(getFeedsFromApi(moduleId, recordId, channelId, page - 1));
+    dispatch(getFeedsFromApi(moduleId, recordId, channelId, page - 1, onError));
     dispatch(setScrollTop(true));
-  }, [page, channelId, recordId, moduleId, dispatch]);
+  }, [page, channelId, recordId, moduleId, dispatch, onError]);
 
   const listPage: number[] = [];
 
@@ -115,7 +115,7 @@ export const Pagination: React.FC<PaginationProps> = (props) => {
               <span
                 key={`number_${item}`}
                 onClick={() => {
-                  dispatch(getFeedsFromApi(moduleId, recordId, channelId, item));
+                  dispatch(getFeedsFromApi(moduleId, recordId, channelId, item, onError));
                   dispatch(setScrollTop(true));
                 }}
                 className={clsx({
