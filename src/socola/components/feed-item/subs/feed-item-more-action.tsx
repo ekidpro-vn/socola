@@ -2,7 +2,6 @@ import axios from 'axios';
 import clsx from 'clsx';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
 import request, { source } from '../../../../config/request';
 import { setNewFeeds } from '../../../../store/action';
 import { getFeeds, getProps } from '../../../../utils/helper';
@@ -15,7 +14,7 @@ export const FeedItemMoreAction: React.FC<{ ID: number; onTurnOnEditMode: () => 
   const dispatch = useDispatch();
   const feeds = useSelector(getFeeds);
   const dataProps = useSelector(getProps);
-  const { secretKey } = dataProps;
+  const { secretKey, onError } = dataProps;
 
   const onDeleteFeed = useCallback(() => {
     const formData = new FormData();
@@ -39,13 +38,13 @@ export const FeedItemMoreAction: React.FC<{ ID: number; onTurnOnEditMode: () => 
         if (axios.isCancel(error)) {
           return;
         }
-        toast.error(error.message, { autoClose: false });
+        onError(error.message);
       });
 
     return () => {
       source.cancel('Canceled by the user');
     };
-  }, [ID, dispatch, feeds, secretKey]);
+  }, [ID, dispatch, feeds, secretKey, onError]);
 
   return (
     <div className="feed-actions flex-col md:flex-row flex items-center md:justify-center flex-wrap">

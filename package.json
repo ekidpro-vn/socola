@@ -1,6 +1,6 @@
 {
   "name": "@ekidpro/socola",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "./build/index.js",
   "module": "./build/index.es.js",
   "types": "./build/index.d.ts",
@@ -33,7 +33,7 @@
     "@testing-library/react": "^11.2.5",
     "@types/jest": "^26.0.20",
     "@types/node": "^14.14.22",
-    "@types/react-datepicker": "^4.1.4",
+    "@types/react-router-dom": "^5.1.8",
     "@types/react-select": "^4.0.17",
     "@types/testing-library__react": "^10.2.0",
     "@typescript-eslint/eslint-plugin": "^4.14.2",
@@ -89,22 +89,20 @@
     "react-router-dom": "^5.2.0"
   },
   "dependencies": {
-    "@ekidpro/ui": "0.0.16",
+    "@ekidpro/ui.datepicker": "0.0.28",
+    "@ekidpro/ui.modal": "0.0.28",
     "axios": "^0.21.1",
     "react-content-loader": "^6.0.1",
-    "react-datepicker": "^4.1.1",
-    "react-image-lightbox": "^5.1.4",
     "react-select": "^4.3.1",
-    "react-toastify": "^7.0.4",
     "react-webcam": "^5.2.4"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ekidpro-vn/ekp-table.git"
+    "url": "git+https://github.com/ekidpro-vn/socola.git"
   },
   "bugs": {
-    "url": "https://github.com/ekidpro-vn/ekp-table/issues"
+    "url": "https://github.com/ekidpro-vn/socola/issues"
   },
-  "homepage": "https://ekidpro-vn.github.io/ekp-table",
+  "homepage": "https://ekidpro-vn.github.io/socola",
   "description": ""
 }

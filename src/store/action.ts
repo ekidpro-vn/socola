@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { Dispatch } from 'react';
-import { toast } from 'react-toastify';
 import request from '../config/request';
 import { FeedType } from '../types/feed';
 import { getTransformFeeds } from '../utils/transform-data';
@@ -31,7 +30,13 @@ export const setPaginationFeed = (data: PaginationFeed) => {
   };
 };
 
-export const getFeedsFromApi = (moduleId?: string, recordId?: string, channelId?: string, page?: number) => {
+export const getFeedsFromApi = (
+  moduleId?: string,
+  recordId?: string,
+  channelId?: string,
+  page?: number,
+  onError?: (e: string) => void
+) => {
   return (dispatch: Dispatch<unknown>) => {
     request
       .get('/api/feed/getfeeds', {
@@ -66,7 +71,7 @@ export const getFeedsFromApi = (moduleId?: string, recordId?: string, channelId?
         if (axios.isCancel(error)) {
           return;
         }
-        toast.error(error.message, { autoClose: false });
+        onError && onError(error.message);
       });
 
     return () => {

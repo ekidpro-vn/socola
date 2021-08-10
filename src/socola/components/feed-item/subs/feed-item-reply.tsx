@@ -2,7 +2,6 @@ import axios from 'axios';
 import clsx from 'clsx';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
 import { SubFeedType } from 'types/feed';
 import { LoadingSeemMoreIcon } from '../../../../assets/loading-see-more';
 import { SOCOLA_AVATAR_URL } from '../../../../config/index';
@@ -21,7 +20,7 @@ export const FeedItemReply: React.FC<{
   const [loading, setLoading] = useState<boolean>(false);
   const feeds = useSelector(getFeeds);
   const dataProps = useSelector(getProps);
-  const { readOnly } = dataProps;
+  const { readOnly, onError } = dataProps;
   const [pageSeeMore, setPageSeeMore] = useState<number>(1);
 
   const onLikeComment = useCallback(
@@ -62,14 +61,14 @@ export const FeedItemReply: React.FC<{
           if (axios.isCancel(error)) {
             return;
           }
-          toast.error(error.message, { autoClose: false });
+          onError(error.message);
         });
 
       return () => {
         source.cancel('Canceled by the user');
       };
     },
-    [dispatch, feeds, feedkey, readOnly]
+    [dispatch, feeds, feedkey, readOnly, onError]
   );
 
   const onViewMore = useCallback(() => {
@@ -101,14 +100,14 @@ export const FeedItemReply: React.FC<{
         if (axios.isCancel(error)) {
           return;
         }
-        toast.error(error.message, { autoClose: false });
+        onError(error.message);
         setLoading(false);
       });
 
     return () => {
       source.cancel('Canceled by the user');
     };
-  }, [feedkey, dispatch, feeds, pageSeeMore]);
+  }, [feedkey, dispatch, feeds, pageSeeMore, onError]);
 
   if (!Comments || Comments.length === 0) {
     return null;
