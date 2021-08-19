@@ -26,8 +26,9 @@ export default {
     resolve(),
     commonjs(),
     typescript({ useTsconfigDeclarationDir: true }),
-    image(),
+    image(), // ko can
     json(),
-    css(),
+    css(), // ko can
+    // tailwindcss peer, ko add truc tiep vao lib
   ],
 };
