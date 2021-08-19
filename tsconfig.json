@@ -13,5 +13,5 @@
     "baseUrl": "./src"
   },
   "include": ["src/**/*", "global.d.ts"],
-  "exclude": ["node_modules", "build"]
+  "exclude": ["node_modules", "build", "**/*.stories.tsx", "styles"]
 }
