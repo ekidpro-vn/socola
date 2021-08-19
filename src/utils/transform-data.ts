@@ -1,7 +1,7 @@
 import get from 'lodash.get';
 import { FeedType } from 'types/feed';
 
-export const getTransformFeeds = (feeds: any) => {
+export const getTransformFeeds = (feeds: Record<string, unknown>) => {
   if (feeds && Array.isArray(feeds) && feeds.length > 0) {
     const transformFeeds: FeedType[] = feeds.map((item) => {
       return {

@@ -1,5 +1,5 @@
+import { LoadingComponent } from '@ekidpro/ui.loading';
 import React, { useEffect } from 'react';
-import { List } from 'react-content-loader';
 import { useDispatch, useSelector } from 'react-redux';
 import { getFeedsFromApi } from '../../../store/action';
 import { getFeeds, getPaginationFeed, getProps } from '../../../utils/helper';
@@ -13,21 +13,23 @@ export const FeedList: React.FC = () => {
   const feeds = useSelector(getFeeds);
   const pagination = useSelector(getPaginationFeed);
 
+  console.log('ducnh4', feeds);
+
   useEffect(() => {
     if (moduleId) {
       dispatch(getFeedsFromApi(moduleId, recordId, channelId, undefined, onError));
     }
   }, [moduleId, channelId, recordId, dispatch, onError]);
 
-  if (!feeds) {
+  if (typeof feeds === 'undefined') {
     return (
       <div className="mt-10">
-        <List />
+        <LoadingComponent />
       </div>
     );
   }
 
-  if (feeds.length === 0) {
+  if (feeds === null || feeds.length === 0) {
     return null;
   }
 

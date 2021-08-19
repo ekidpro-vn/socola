@@ -2,7 +2,7 @@ import { Modal } from '@ekidpro/ui.modal';
 import axios from 'axios';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash.isempty';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
@@ -10,8 +10,14 @@ import { v4 as uuid } from 'uuid';
 import { LoadingIcon } from '../../../assets/loading';
 import { SendIcon } from '../../../assets/send-icon';
 import request, { source } from '../../../config/request';
-import { removeAllUploadImage, removeUploadImage, setNewFeeds, setNewUploadImage } from '../../../store/action';
-import { base64ToBlob, getDataDropdown, getFeeds, getProps, getUploadImages } from '../../../utils/helper';
+import {
+  removeAllUploadImage,
+  removeUploadImage,
+  setError,
+  setNewFeeds,
+  setNewUploadImage,
+} from '../../../store/action';
+import { base64ToBlob, getDataDropdown, getError, getFeeds, getProps, getUploadImages } from '../../../utils/helper';
 import { getTransformFeed } from '../../../utils/transform-data';
 import { Camera } from '../camera';
 import { optionsStatus } from './editor.data';
@@ -34,6 +40,8 @@ export const Editor: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessageUpload, setErrorMessageUpload] = useState<string>('');
   const [dateInputType, setDateInputType] = useState<'text' | 'date'>('text');
+
+  const errorSocola = useSelector(getError);
 
   const resetInput = useCallback(() => {
     setValueInput('');
@@ -103,7 +111,12 @@ export const Editor: React.FC = () => {
         if (axios.isCancel(error)) {
           return;
         }
-        onError(error.message);
+        let errorMessage: string = error.message ?? 'System error';
+        if (error.response && error.response.data && error.response.data.message) {
+          errorMessage = error.response.data.message;
+        }
+        onError(errorMessage, 'post');
+        dispatch(setError(errorMessage));
         setLoading(false);
       });
 
@@ -345,7 +358,8 @@ export const Editor: React.FC = () => {
             disabled={loading}
             onClick={onPostValue}
             className={clsx({
-              'bg-green-600 text-white px-4 py-2 rounded duration-300 flex items-center justify-center': true,
+              'bg-green-600 text-white px-4 py-2 rounded duration-300 flex items-center focus:outline-none justify-center':
+                true,
               'opacity-70': !valueInput,
               'opacity-100': !!valueInput,
               'cursor-not-allowed': loading || errorMessageUpload,
@@ -355,6 +369,11 @@ export const Editor: React.FC = () => {
             <span className="ml-1 font-medium">POST</span>
           </button>
         </div>
+        {errorSocola && (
+          <div className="my-4 flex justify-end">
+            <span className="block text-red-500">Error: {errorSocola}</span>
+          </div>
+        )}
       </div>
 
       <Modal show={showModalCamera} size="lg" onClose={() => setShowModalCamera(false)}>

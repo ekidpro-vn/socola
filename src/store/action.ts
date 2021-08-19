@@ -8,6 +8,7 @@ import { PaginationFeed, SetProps, UploadImage } from './type';
 const source = axios.CancelToken.source();
 
 export const ACTION_GET_FEEDS_SUCCESS = 'ACTION_GET_FEEDS_SUCCESS';
+export const ACTION_SET_FEEDS_NULL = 'ACTION_SET_FEEDS_NULL';
 export const ACTION_SET_NEW_FEEDS = 'ACTION_SET_NEW_FEEDS';
 export const ACTION_SET_NEW_UPLOAD_IMAGE = 'ACTION_SET_NEW_UPLOAD_IMAGE';
 export const ACTION_REMOVE_UPLOAD_IMAGE = 'ACTION_REMOVE_UPLOAD_IMAGE';
@@ -15,10 +16,25 @@ export const ACTION_REMOVE_ALL_UPLOAD_IMAGE = 'ACTION_REMOVE_ALL_UPLOAD_IMAGE';
 export const ACTION_SET_PROPS = 'ACTION_SET_PROPS';
 export const ACTION_SET_PAGINATION_FEED = 'ACTION_SET_PAGINATION_FEED';
 export const ACTION_SET_SCROLL_TOP = 'ACTION_SET_SCROLL_TOP';
+export const ACTION_SET_ERROR = 'ACTION_SET_ERROR';
 
 const getFeedsFromApiSuccess = (data: FeedType[]) => {
   return <const>{
     type: ACTION_GET_FEEDS_SUCCESS,
+    payload: { data },
+  };
+};
+
+export const setFeedsNull = (error: string) => {
+  return {
+    type: ACTION_SET_FEEDS_NULL,
+    payload: { data: error },
+  };
+};
+
+export const setError = (data: string) => {
+  return {
+    type: ACTION_SET_ERROR,
     payload: { data },
   };
 };
@@ -35,7 +51,7 @@ export const getFeedsFromApi = (
   recordId?: string,
   channelId?: string,
   page?: number,
-  onError?: (e: string) => void
+  onError?: (e: string, type: 'get' | 'post' | 'put' | 'delete') => void
 ) => {
   return (dispatch: Dispatch<unknown>) => {
     request
@@ -71,7 +87,12 @@ export const getFeedsFromApi = (
         if (axios.isCancel(error)) {
           return;
         }
-        onError && onError(error.message);
+        let errorMessage: string = error.message ?? 'System error';
+        if (error.response && error.response.data && error.response.data.message) {
+          errorMessage = error.response.data.message;
+        }
+        onError(errorMessage, 'post');
+        dispatch(setFeedsNull(errorMessage));
       });
 
     return () => {
@@ -128,4 +149,6 @@ export type Action =
   | ReturnType<typeof setNewUploadImage>
   | ReturnType<typeof removeAllUploadImage>
   | ReturnType<typeof setScrollTop>
+  | ReturnType<typeof setFeedsNull>
+  | ReturnType<typeof setError>
   | ReturnType<typeof removeUploadImage>;

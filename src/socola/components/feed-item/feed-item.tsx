@@ -2,13 +2,13 @@ import axios from 'axios';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
-import { upperFirst } from 'lodash';
+import upperFirst from 'lodash.upperfirst';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FeedType } from 'types/feed';
 import { SOCOLA_AVATAR_URL } from '../../../config/index';
 import request, { source } from '../../../config/request';
-import { setNewFeeds } from '../../../store/action';
+import { setError, setNewFeeds } from '../../../store/action';
 import { getDisplayTime, getFeeds, getProps } from '../../../utils/helper';
 import { getTransformFeed } from '../../../utils/transform-data';
 import { FeedItemStyle } from './feed-item.style';
@@ -20,7 +20,7 @@ dayjs.extend(LocalizedFormat);
 
 export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
   const dataProps = useSelector(getProps);
-  const { readOnly, userInfo, renderType, secretKey, onError } = dataProps;
+  const { readOnly, userInfo, renderType, secretKey, onError, cId } = dataProps;
   const [showReplyInput, setShowReplyInput] = useState<boolean>(false);
   const [valueReplyInput, setValueReplyInput] = useState<string>('');
   const [editMode, setEditMode] = useState<boolean>(false);
@@ -76,7 +76,12 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
           if (axios.isCancel(error)) {
             return;
           }
-          onError(error.message);
+          let errorMessage: string = error.message ?? 'System error';
+          if (error.response && error.response.data && error.response.data.message) {
+            errorMessage = error.response.data.message;
+          }
+          onError(errorMessage, 'post');
+          dispatch(setError(errorMessage));
         });
 
       return () => {
@@ -118,7 +123,12 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
           if (axios.isCancel(error)) {
             return;
           }
-          onError(error.message);
+          let errorMessage: string = error.message ?? 'System error';
+          if (error.response && error.response.data && error.response.data.message) {
+            errorMessage = error.response.data.message;
+          }
+          onError(errorMessage, 'post');
+          dispatch(setError(errorMessage));
         });
 
       return () => {
@@ -152,7 +162,12 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
         if (axios.isCancel(error)) {
           return;
         }
-        onError(error.message);
+        let errorMessage: string = error.message ?? 'System error';
+        if (error.response && error.response.data && error.response.data.message) {
+          errorMessage = error.response.data.message;
+        }
+        onError(errorMessage, 'post');
+        dispatch(setError(errorMessage));
       });
 
     return () => {
@@ -178,7 +193,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
   return (
     <FeedItemStyle className="mt-10">
       <div className="flex items-start justify-between overflow-hidden">
-        <img src={`${SOCOLA_AVATAR_URL}&uid=${UserID}`} className="w-10 h-10 rounded-full" />
+        <img src={`${SOCOLA_AVATAR_URL}?cid=${cId}&uid=${UserID}`} className="w-10 h-10 rounded-full" />
         <div className="wrap-image-more-action ml-4">
           <div className="flex items-center one-primary-feed duration-300">
             <div

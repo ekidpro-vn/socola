@@ -6,7 +6,7 @@ import { SubFeedType } from 'types/feed';
 import { LoadingSeemMoreIcon } from '../../../../assets/loading-see-more';
 import { SOCOLA_AVATAR_URL } from '../../../../config/index';
 import request, { source } from '../../../../config/request';
-import { setNewFeeds } from '../../../../store/action';
+import { setError, setNewFeeds } from '../../../../store/action';
 import { getDisplayTime, getFeeds, getProps } from '../../../../utils/helper';
 
 const LIMIT = 5;
@@ -20,7 +20,7 @@ export const FeedItemReply: React.FC<{
   const [loading, setLoading] = useState<boolean>(false);
   const feeds = useSelector(getFeeds);
   const dataProps = useSelector(getProps);
-  const { readOnly, onError } = dataProps;
+  const { readOnly, onError, cId } = dataProps;
   const [pageSeeMore, setPageSeeMore] = useState<number>(1);
 
   const onLikeComment = useCallback(
@@ -61,7 +61,12 @@ export const FeedItemReply: React.FC<{
           if (axios.isCancel(error)) {
             return;
           }
-          onError(error.message);
+          let errorMessage: string = error.message ?? 'System error';
+          if (error.response && error.response.data && error.response.data.message) {
+            errorMessage = error.response.data.message;
+          }
+          onError(errorMessage, 'post');
+          dispatch(setError(errorMessage));
         });
 
       return () => {
@@ -100,7 +105,12 @@ export const FeedItemReply: React.FC<{
         if (axios.isCancel(error)) {
           return;
         }
-        onError(error.message);
+        let errorMessage: string = error.message ?? 'System error';
+        if (error.response && error.response.data && error.response.data.message) {
+          errorMessage = error.response.data.message;
+        }
+        onError(errorMessage, 'post');
+        dispatch(setError(errorMessage));
         setLoading(false);
       });
 
@@ -120,7 +130,7 @@ export const FeedItemReply: React.FC<{
 
         return (
           <div className="flex items-start mt-4" key={`${UserID}_${index}`}>
-            <img src={`${SOCOLA_AVATAR_URL}&uid=${UserID}`} className="w-8 h-8 rounded-full" />
+            <img src={`${SOCOLA_AVATAR_URL}?cid=${cId}&uid=${UserID}`} className="w-8 h-8 rounded-full" />
             <div className="ml-4">
               <div className="bg-gray-100 px-4 py-2 rounded-lg">
                 <div>
