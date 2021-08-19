@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import request, { source } from '../../../../config/request';
-import { setNewFeeds } from '../../../../store/action';
+import { setError, setNewFeeds } from '../../../../store/action';
 import { getFeeds, getProps } from '../../../../utils/helper';
 
 export const FeedItemMoreAction: React.FC<{ ID: number; onTurnOnEditMode: () => void }> = ({
@@ -38,7 +38,12 @@ export const FeedItemMoreAction: React.FC<{ ID: number; onTurnOnEditMode: () => 
         if (axios.isCancel(error)) {
           return;
         }
-        onError(error.message);
+        let errorMessage: string = error.message ?? 'System error';
+        if (error.response && error.response.data && error.response.data.message) {
+          errorMessage = error.response.data.message;
+        }
+        onError(errorMessage, 'post');
+        dispatch(setError(errorMessage));
       });
 
     return () => {

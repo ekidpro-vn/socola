@@ -10,19 +10,20 @@ export interface UploadImage {
 export interface SetProps {
   moduleId?: string;
   recordId?: string;
+  cId?: string;
   channelId?: string;
-  socolaToken?: string;
+  token?: string;
   statusOption?: OptionProps[];
   showDate?: boolean;
   showStatus?: boolean;
   readOnly?: boolean;
-  renderType?: 'minimum' | 'social' | 'note';
+  renderType?: 'minimum' | 'social';
   userInfo?: {
     id: number;
     type: string;
   };
   secretKey?: string;
-  onError?: (e: string) => void;
+  onError?: (e: string, type: 'get' | 'put' | 'post' | 'delete') => void;
   onShowImageFeed?: (src: string, index: number) => void;
 }
 
@@ -34,7 +35,7 @@ export interface PaginationFeed {
 }
 
 export interface State {
-  feeds: FeedType[] | null;
+  feeds: FeedType[] | null | undefined;
   error?: string;
   loading?: boolean;
   uploadImages: UploadImage[];

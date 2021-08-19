@@ -46,6 +46,10 @@ export const getScrollTop = (state: State) => {
   return state.scrollTop;
 };
 
+export const getError = (state: State) => {
+  return state.error;
+};
+
 export const getDisplayTime = (timestamp: number) => {
   // milisecond
   const today = dayjs().startOf('day').valueOf();

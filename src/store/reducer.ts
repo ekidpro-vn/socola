@@ -3,7 +3,7 @@ import { Action } from './action';
 import { State } from './type';
 
 export const initialState: State = {
-  feeds: null,
+  feeds: undefined,
   error: '',
   loading: false,
   uploadImages: [],
@@ -12,7 +12,7 @@ export const initialState: State = {
     moduleId: '',
     recordId: '',
     channelId: '',
-    socolaToken: '',
+    token: '',
     statusOption: [],
     showDate: true,
     showStatus: true,
@@ -35,18 +35,23 @@ export const initialState: State = {
 export function rootReducer(state: State = initialState, action: Action) {
   switch (action.type) {
     case ACTIONS.ACTION_SET_PROPS:
-      return { ...state, props: action.payload.data };
+      return { ...state, props: action.payload.data, error: '' };
 
     case ACTIONS.ACTION_GET_FEEDS_SUCCESS:
-      return { ...state, feeds: action.payload.data };
+      return { ...state, feeds: action.payload.data, error: '' };
+
+    case ACTIONS.ACTION_SET_FEEDS_NULL: {
+      return { ...state, feeds: null, error: action.payload.data };
+    }
 
     case ACTIONS.ACTION_SET_NEW_FEEDS:
-      return { ...state, feeds: action.payload.data };
+      return { ...state, feeds: action.payload.data, error: '' };
 
     case ACTIONS.ACTION_SET_NEW_UPLOAD_IMAGE:
       return {
         ...state,
         uploadImages: [...state.uploadImages, action.payload.data],
+        error: '',
       };
 
     case ACTIONS.ACTION_REMOVE_UPLOAD_IMAGE: {
@@ -54,6 +59,7 @@ export function rootReducer(state: State = initialState, action: Action) {
       return {
         ...state,
         uploadImages: newUploadImages,
+        error: '',
       };
     }
 
@@ -61,6 +67,7 @@ export function rootReducer(state: State = initialState, action: Action) {
       return {
         ...state,
         uploadImages: [],
+        error: '',
       };
     }
 
@@ -68,6 +75,7 @@ export function rootReducer(state: State = initialState, action: Action) {
       return {
         ...state,
         paginationFeed: action.payload.data,
+        error: '',
       };
     }
 
@@ -75,6 +83,14 @@ export function rootReducer(state: State = initialState, action: Action) {
       return {
         ...state,
         scrollTop: action.payload.data,
+        error: '',
+      };
+    }
+
+    case ACTIONS.ACTION_SET_ERROR: {
+      return {
+        ...state,
+        error: action.payload.data,
       };
     }
 

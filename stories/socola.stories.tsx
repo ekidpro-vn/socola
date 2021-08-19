@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
-import { Socola } from '../App';
-import '../styles/tailwind.css';
+import 'tailwindcss/tailwind.css';
+import { Socola } from '../src';
 
 export default {
   title: 'Socola',
@@ -17,8 +17,10 @@ const Template: ComponentStory<typeof Socola> = (args) => (
 export const DefaultSocola = Template.bind({});
 DefaultSocola.args = {
   moduleId: 'feedback',
-  socolaToken: 'f748a60cb3980c4009302959d72d7a4f',
-  secretKey: 'rtSsf3VeJ8r2cnHgadx5ObYY50Ael8VG',
+  token: '',
+  // channelId: '',
+  cId: 'ekidpro',
+  secretKey: '',
   recordId: '15803',
   showDate: true,
   showStatus: true,

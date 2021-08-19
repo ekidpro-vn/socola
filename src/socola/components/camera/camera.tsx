@@ -1,11 +1,6 @@
 import React, { useCallback, useRef } from 'react';
 import Webcam from 'react-webcam';
 
-const videoConstraints = {
-  width: 540,
-  facingMode: 'environment',
-};
-
 interface CameraProps {
   onCapture: (data: string) => void;
 }

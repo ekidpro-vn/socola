@@ -8,14 +8,14 @@ const request = axios.create({
   cancelToken: source.token,
 });
 
-export const setupAxios = (socolaToken: string, apiDomain?: string) => {
+export const setupAxios = (token: string, domain?: string) => {
   request.interceptors.request.use(
     (config) => {
       if (!config.url?.startsWith('https://')) {
-        config.url = `${apiDomain || SOCOLA_URL}${config.url}`;
+        config.url = `${domain || SOCOLA_URL}${config.url}`;
         config.params = {
           ...config.params,
-          token: socolaToken,
+          token: token,
         };
       }
 

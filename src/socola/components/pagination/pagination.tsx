@@ -72,7 +72,7 @@ export const Pagination: React.FC<PaginationProps> = (props) => {
   }
 
   return (
-    <div className="flex justify-center my-20">
+    <div className="flex justify-center mt-20 mb-10">
       <div className="flex items-center justify-center">
         <span
           onClick={onPrevFirstPage}
