@@ -5,8 +5,8 @@ import thunkMiddleware from 'redux-thunk';
 import { setupAxios } from './config/request';
 import { SocolaComponent } from './socola/socola';
 import { rootReducer } from './store/reducer';
-import './styles/react-datepicker.css';
-import './styles/tailwind.css';
+// import './styles/react-datepicker.css';
+// import './styles/tailwind.css';
 import { SocolaProps } from './types/socola';
 
 const middleWare = applyMiddleware(thunkMiddleware);
