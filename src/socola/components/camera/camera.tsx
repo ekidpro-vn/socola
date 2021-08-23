@@ -14,10 +14,6 @@ export const Camera: React.FC<CameraProps> = (props) => {
     onCapture(imageSrc);
   }, [webcamRef, onCapture]);
 
-  const onUserMedia = (e) => {
-    console.log(e);
-  };
-
   return (
     <div>
       <div>
@@ -26,7 +22,7 @@ export const Camera: React.FC<CameraProps> = (props) => {
           // audio={true}?\
           screenshotFormat="image/png"
           // videoConstraints={videoConstraints}
-          onUserMedia={onUserMedia}
+          // onUserMedia={onUserMedia}
         />
       </div>
       <div className="mt-10 flex justify-center items-center">

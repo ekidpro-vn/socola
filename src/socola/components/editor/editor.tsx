@@ -376,7 +376,7 @@ export const Editor: React.FC = () => {
         )}
       </div>
 
-      <Modal show={showModalCamera} size="lg" onClose={() => setShowModalCamera(false)}>
+      <Modal show={showModalCamera} size="lg" zIndex={9999} onClose={() => setShowModalCamera(false)}>
         <div className="flex items-center justify-between">
           <div />
           <span className="font-semibold uppercase block text-center text-xl">Please take a picture!</span>
