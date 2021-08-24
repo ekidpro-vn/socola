@@ -19,9 +19,9 @@ DefaultSocola.args = {
   moduleId: 'feedback',
   token: '',
   // channelId: '',
-  cId: 'ekidpro',
+  clientId: 'ekidpro',
   secretKey: '',
-  recordId: '15803',
+  recordId: '15804',
   showDate: true,
   showStatus: true,
   userInfo: {

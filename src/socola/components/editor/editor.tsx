@@ -40,7 +40,6 @@ export const Editor: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessageUpload, setErrorMessageUpload] = useState<string>('');
   const [dateInputType, setDateInputType] = useState<'text' | 'date'>('text');
-
   const errorSocola = useSelector(getError);
 
   const resetInput = useCallback(() => {
@@ -234,7 +233,7 @@ export const Editor: React.FC = () => {
                   <img src={`${base64Url}`} alt="preview" className="w-20 h-20 rounded object-cover" />
                   <button
                     onClick={() => onRemoveUploadImage(id)}
-                    className="absolute -top-1.5 -right-1.5 p-0.5 duration-300 text-white bg-red-600 rounded-full"
+                    className="focus:outline-none absolute -top-1.5 -right-1.5 p-0.5 duration-300 text-white bg-red-600 rounded-full"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -267,9 +266,12 @@ export const Editor: React.FC = () => {
       <div className="mt-5">
         <div className="sm:flex sm:items-center w-full">
           <div className="flex items-center sm:mr-3 justify-center">
-            <button disabled={loading} className="hover:bg-indigo-50 duration-300 rounded w-10 h-10 text-gray-500 mr-2">
+            <button
+              disabled={loading}
+              className="focus:outline-none hover:bg-indigo-50 duration-300 rounded w-10 h-10 text-gray-500 mr-2"
+            >
               <label htmlFor="file-input" className="w-full h-full flex justify-center items-center cursor-pointer">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
                   <path
                     fillRule="evenodd"
                     d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
@@ -294,9 +296,9 @@ export const Editor: React.FC = () => {
             <button
               disabled={loading}
               onClick={() => setShowModalCamera(true)}
-              className="hover:bg-indigo-50 duration-300 rounded w-10 h-10 flex justify-center items-center text-gray-500 mr-4"
+              className="focus:outline-none hover:bg-indigo-50 duration-300 rounded w-10 h-10 flex justify-center items-center text-gray-500 mr-4"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
                 <path
                   fillRule="evenodd"
                   d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z"
@@ -309,7 +311,7 @@ export const Editor: React.FC = () => {
               <input
                 type="checkbox"
                 disabled={loading}
-                className="form-checkbox h-4 w-4 text-gray-600 block mr-1"
+                className="form-checkbox h-5 w-5 text-gray-600 block mr-1"
                 checked={isPublic}
                 onChange={(e) => setIsPublic(e.target.checked)}
               />
@@ -322,7 +324,7 @@ export const Editor: React.FC = () => {
                 {dateInputType === 'text' ? (
                   <input
                     type="text"
-                    className="focus:outline-none border w-full border-gray-300 focus:border-blue-500 px-3 py-1.5 rounded"
+                    className="milestone focus:outline-none border w-full border-gray-300 focus:border-blue-500 px-3 py-1.5 rounded"
                     value=""
                     readOnly
                     placeholder="Milestone"
@@ -334,7 +336,7 @@ export const Editor: React.FC = () => {
                     type="date"
                     onChange={(e) => setDate(dayjs(e.target.value).toDate())}
                     disabled={loading}
-                    className="focus:outline-none border w-full border-gray-300 focus:border-blue-500 px-3 py-1.5 rounded"
+                    className="milestone focus:outline-none border w-full border-gray-300 focus:border-blue-500 px-3 py-1.5 rounded"
                   />
                 )}
               </div>
@@ -376,11 +378,11 @@ export const Editor: React.FC = () => {
         )}
       </div>
 
-      <Modal show={showModalCamera} size="lg" onClose={() => setShowModalCamera(false)}>
+      <Modal show={showModalCamera} size="lg" zIndex={9999} onClose={() => setShowModalCamera(false)}>
         <div className="flex items-center justify-between">
           <div />
           <span className="font-semibold uppercase block text-center text-xl">Please take a picture!</span>
-          <button className="opacity-75 hover:opacity-100" onClick={() => setShowModalCamera(false)}>
+          <button className="focus:outline-none opacity-75 hover:opacity-100" onClick={() => setShowModalCamera(false)}>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path
                 fillRule="evenodd"

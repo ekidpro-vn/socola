@@ -20,7 +20,7 @@ dayjs.extend(LocalizedFormat);
 
 export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
   const dataProps = useSelector(getProps);
-  const { readOnly, userInfo, renderType, secretKey, onError, cId } = dataProps;
+  const { readOnly, userInfo, renderType, secretKey, onError, clientId } = dataProps;
   const [showReplyInput, setShowReplyInput] = useState<boolean>(false);
   const [valueReplyInput, setValueReplyInput] = useState<string>('');
   const [editMode, setEditMode] = useState<boolean>(false);
@@ -155,7 +155,18 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
         }
         setEditMode(false);
         const transformFeedData = getTransformFeed(feeddata);
-        const newFeeds = [transformFeedData, ...feeds];
+        // for (let i = 0; i < feeds.length; i++){
+        //   if (feeds[i].FeedKey === transformFeedData.FeedKey) {
+        //     feeds[i] = transformFeedData
+        //   }
+        // }
+        const newFeeds = feeds.map((item) => {
+          if (item.FeedKey === transformFeedData.FeedKey) {
+            return transformFeedData;
+          }
+          return item;
+        });
+        // const newFeeds = [transformFeedData, ...feeds];
         dispatch(setNewFeeds(newFeeds));
       })
       .catch((error) => {
@@ -193,7 +204,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
   return (
     <FeedItemStyle className="mt-10">
       <div className="flex items-start justify-between overflow-hidden">
-        <img src={`${SOCOLA_AVATAR_URL}?cid=${cId}&uid=${UserID}`} className="w-10 h-10 rounded-full" />
+        <img src={`${SOCOLA_AVATAR_URL}?cid=${clientId}&uid=${UserID}`} className="w-10 h-10 rounded-full" />
         <div className="wrap-image-more-action ml-4">
           <div className="flex items-center one-primary-feed duration-300">
             <div
@@ -241,13 +252,13 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
                   <div className="ml-4 w-20">
                     <button
                       onClick={onEditFeed}
-                      className="block w-full text-sm shadow-md text-center bg-blue-500 duration-300 rounded-md text-white hover:bg-blue-600 px-3 py-1.5"
+                      className="focus:outline-none block w-full text-sm shadow-md text-center bg-blue-500 duration-300 rounded-md text-white hover:bg-blue-600 px-3 py-1.5"
                     >
                       Save
                     </button>
                     <button
                       onClick={() => setEditMode(false)}
-                      className="block text-sm shadow w-full text-center bg-white duration-300 rounded-md border px-3 py-1.5 mt-3"
+                      className="focus:outline-none block text-sm shadow w-full text-center bg-white duration-300 rounded-md border px-3 py-1.5 mt-3"
                     >
                       Cancel
                     </button>
@@ -270,7 +281,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
                   <button
                     onClick={() => onLikeComment(FeedKey)}
                     className={clsx({
-                      'mr-3': true,
+                      'focus:outline-none mr-3': true,
                       'text-gray-500 duration-300 hover:text-blue-500': !isYouLiked && !readOnly,
                       'text-blue-500': isYouLiked && !readOnly,
                       'text-gray-500': readOnly,
@@ -286,7 +297,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
               {CommentCount > 0 && <span className="block mr-0.5">{CommentCount}</span>}
 
               <button
-                className="mr-3 text-gray-500"
+                className="focus:outline-none mr-3 text-gray-500"
                 onClick={() => {
                   if (readOnly) {
                     return;

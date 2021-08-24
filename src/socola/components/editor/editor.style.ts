@@ -18,4 +18,8 @@ export const EditorStyle = styled.div`
       }
     }
   }
+
+  .milestone {
+    height: 38px !important;
+  }
 `;

@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getFeedsFromApi, setScrollTop } from '../../../store/action';
-import { getProps } from '../../../utils/helper';
+import { getPaginationFeed, getProps } from '../../../utils/helper';
 
 export interface PaginationType {
   page: number;
@@ -11,14 +11,12 @@ export interface PaginationType {
   totalPages: number;
 }
 
-interface PaginationProps {
-  pagination?: PaginationType | null;
-}
-
-export const Pagination: React.FC<PaginationProps> = (props) => {
-  const { page, totalPages } = props.pagination;
+export const Pagination: React.FC = () => {
   const dispatch = useDispatch();
   const dataProps = useSelector(getProps);
+  const pagination = useSelector(getPaginationFeed);
+
+  const { page, totalPages } = pagination;
   const { moduleId, recordId, channelId, onError } = dataProps;
 
   const onNextLastPage = useCallback(() => {
@@ -67,7 +65,7 @@ export const Pagination: React.FC<PaginationProps> = (props) => {
     }
   }
 
-  if (!props.pagination) {
+  if (!pagination || listPage.length < 2) {
     return null;
   }
 

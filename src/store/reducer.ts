@@ -1,6 +1,23 @@
 import * as ACTIONS from './action';
 import { Action } from './action';
-import { State } from './type';
+import { SetProps, State } from './type';
+
+export const initialProps: SetProps = {
+  moduleId: '',
+  recordId: '',
+  channelId: '',
+  token: '',
+  statusOption: [],
+  showDate: true,
+  showStatus: true,
+  readOnly: false,
+  renderType: 'social',
+  userInfo: {
+    id: 0,
+    type: '',
+  },
+  secretKey: '',
+};
 
 export const initialState: State = {
   feeds: undefined,
@@ -8,22 +25,7 @@ export const initialState: State = {
   loading: false,
   uploadImages: [],
   scrollTop: false,
-  props: {
-    moduleId: '',
-    recordId: '',
-    channelId: '',
-    token: '',
-    statusOption: [],
-    showDate: true,
-    showStatus: true,
-    readOnly: false,
-    renderType: 'social',
-    userInfo: {
-      id: 0,
-      type: '',
-    },
-    secretKey: '',
-  },
+  props: initialProps,
   paginationFeed: {
     totalItems: 0,
     totalPages: 0,
