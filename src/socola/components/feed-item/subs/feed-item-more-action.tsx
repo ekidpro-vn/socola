@@ -57,7 +57,7 @@ export const FeedItemMoreAction: React.FC<{ ID: number; onTurnOnEditMode: () => 
         <button
           onClick={() => setShowFeedActions(!showFeedActions)}
           className={clsx({
-            'btn-more-option-feed duration-300 text-gray-500 w-7 h-7 flex items-center justify-center rounded-full':
+            'focus:outline-none btn-more-option-feed duration-300 text-gray-500 w-7 h-7 flex items-center justify-center rounded-full':
               true,
             'hover:bg-indigo-50 btn-more-option-feed-hover': !showFeedActions,
             'bg-indigo-50': showFeedActions,
@@ -100,7 +100,7 @@ export const FeedItemMoreAction: React.FC<{ ID: number; onTurnOnEditMode: () => 
                     setShowFeedActions(false);
                     onTurnOnEditMode();
                   }}
-                  className="flex items-center w-full text-gray-500 px-4 py-2 duration-300 hover:bg-indigo-50"
+                  className="focus:outline-none flex items-center w-full text-gray-500 px-4 py-2 duration-300 hover:bg-indigo-50"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
@@ -115,7 +115,7 @@ export const FeedItemMoreAction: React.FC<{ ID: number; onTurnOnEditMode: () => 
                 <hr />
                 <button
                   onClick={onDeleteFeed}
-                  className="flex items-center w-full text-gray-500 px-4 py-2 duration-300 hover:bg-indigo-50"
+                  className="focus:outline-none flex items-center w-full text-gray-500 px-4 py-2 duration-300 hover:bg-indigo-50"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                     <path

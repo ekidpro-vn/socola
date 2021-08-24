@@ -153,6 +153,7 @@ export const FeedItemReply: React.FC<{
                 <button
                   onClick={() => onLikeComment(CommentKey)}
                   className={clsx({
+                    'focus:outline-none': true,
                     'text-gray-500 duration-300 hover:text-blue-500': !isYouLiked && !readOnly,
                     'text-blue-500': isYouLiked && !readOnly,
                     'text-gray-500': readOnly,
@@ -172,7 +173,7 @@ export const FeedItemReply: React.FC<{
       })}
       {CommentCount > 5 && LIMIT * pageSeeMore < CommentCount && (
         <button
-          className="flex items-center rounded-md mt-4 ml-3 text-sm font-medium duration-300 hover:underline"
+          className="focus:outline-none flex items-center rounded-md mt-4 ml-3 text-sm font-medium duration-300 hover:underline"
           onClick={onSeeMore}
         >
           <span className="text-gray-600">

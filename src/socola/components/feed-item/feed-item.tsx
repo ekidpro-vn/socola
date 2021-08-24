@@ -252,13 +252,13 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
                   <div className="ml-4 w-20">
                     <button
                       onClick={onEditFeed}
-                      className="block w-full text-sm shadow-md text-center bg-blue-500 duration-300 rounded-md text-white hover:bg-blue-600 px-3 py-1.5"
+                      className="focus:outline-none block w-full text-sm shadow-md text-center bg-blue-500 duration-300 rounded-md text-white hover:bg-blue-600 px-3 py-1.5"
                     >
                       Save
                     </button>
                     <button
                       onClick={() => setEditMode(false)}
-                      className="block text-sm shadow w-full text-center bg-white duration-300 rounded-md border px-3 py-1.5 mt-3"
+                      className="focus:outline-none block text-sm shadow w-full text-center bg-white duration-300 rounded-md border px-3 py-1.5 mt-3"
                     >
                       Cancel
                     </button>
@@ -281,7 +281,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
                   <button
                     onClick={() => onLikeComment(FeedKey)}
                     className={clsx({
-                      'mr-3': true,
+                      'focus:outline-none mr-3': true,
                       'text-gray-500 duration-300 hover:text-blue-500': !isYouLiked && !readOnly,
                       'text-blue-500': isYouLiked && !readOnly,
                       'text-gray-500': readOnly,
@@ -297,7 +297,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
               {CommentCount > 0 && <span className="block mr-0.5">{CommentCount}</span>}
 
               <button
-                className="mr-3 text-gray-500"
+                className="focus:outline-none mr-3 text-gray-500"
                 onClick={() => {
                   if (readOnly) {
                     return;

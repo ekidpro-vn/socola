@@ -28,7 +28,7 @@ export const Camera: React.FC<CameraProps> = (props) => {
       <div className="mt-10 flex justify-center items-center">
         <button
           onClick={capturePhoto}
-          className="flex justify-center items-center rounded px-4 py-2 bg-blue-500 text-white duration-300 hover:bg-blue-600"
+          className="focus:outline-none flex justify-center items-center rounded px-4 py-2 bg-blue-500 text-white duration-300 hover:bg-blue-600"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path
