@@ -10,7 +10,7 @@ export interface UploadImage {
 export interface SetProps {
   moduleId?: string;
   recordId?: string;
-  cId?: string;
+  clientId?: string;
   channelId?: string;
   token?: string;
   statusOption?: OptionProps[];
@@ -25,6 +25,7 @@ export interface SetProps {
   secretKey?: string;
   onError?: (e: string, type: 'get' | 'put' | 'post' | 'delete') => void;
   onShowImageFeed?: (src: string, index: number) => void;
+  numberOfSeeMoreReplyComment?: number;
 }
 
 export interface PaginationFeed {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { useSelector } from 'react-redux';
 import { getProps } from '../../../../utils/helper';
 
@@ -9,7 +9,7 @@ const getGridSm = (data: number) => {
   return data;
 };
 
-export const FeedItemImage: React.FC<{ Image: { name: string; url: string }[] }> = ({ Image }) => {
+export const FeedItemImage: React.FC<{ Image: { name: string; url: string }[] }> = memo(({ Image }) => {
   const dataProps = useSelector(getProps);
   const { onShowImageFeed } = dataProps;
   const images = Image.map((item) => item.url);
@@ -28,4 +28,4 @@ export const FeedItemImage: React.FC<{ Image: { name: string; url: string }[] }>
       })}
     </div>
   );
-};
+});

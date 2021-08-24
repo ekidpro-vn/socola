@@ -20,7 +20,7 @@ dayjs.extend(LocalizedFormat);
 
 export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
   const dataProps = useSelector(getProps);
-  const { readOnly, userInfo, renderType, secretKey, onError, cId } = dataProps;
+  const { readOnly, userInfo, renderType, secretKey, onError, clientId } = dataProps;
   const [showReplyInput, setShowReplyInput] = useState<boolean>(false);
   const [valueReplyInput, setValueReplyInput] = useState<string>('');
   const [editMode, setEditMode] = useState<boolean>(false);
@@ -155,7 +155,18 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
         }
         setEditMode(false);
         const transformFeedData = getTransformFeed(feeddata);
-        const newFeeds = [transformFeedData, ...feeds];
+        // for (let i = 0; i < feeds.length; i++){
+        //   if (feeds[i].FeedKey === transformFeedData.FeedKey) {
+        //     feeds[i] = transformFeedData
+        //   }
+        // }
+        const newFeeds = feeds.map((item) => {
+          if (item.FeedKey === transformFeedData.FeedKey) {
+            return transformFeedData;
+          }
+          return item;
+        });
+        // const newFeeds = [transformFeedData, ...feeds];
         dispatch(setNewFeeds(newFeeds));
       })
       .catch((error) => {
@@ -193,7 +204,7 @@ export const FeedItem: React.FC<{ item: FeedType }> = ({ item }) => {
   return (
     <FeedItemStyle className="mt-10">
       <div className="flex items-start justify-between overflow-hidden">
-        <img src={`${SOCOLA_AVATAR_URL}?cid=${cId}&uid=${UserID}`} className="w-10 h-10 rounded-full" />
+        <img src={`${SOCOLA_AVATAR_URL}?cid=${clientId}&uid=${UserID}`} className="w-10 h-10 rounded-full" />
         <div className="wrap-image-more-action ml-4">
           <div className="flex items-center one-primary-feed duration-300">
             <div

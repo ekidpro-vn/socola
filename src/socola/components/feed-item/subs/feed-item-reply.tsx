@@ -9,8 +9,6 @@ import request, { source } from '../../../../config/request';
 import { setError, setNewFeeds } from '../../../../store/action';
 import { getDisplayTime, getFeeds, getProps } from '../../../../utils/helper';
 
-const LIMIT = 5;
-
 export const FeedItemReply: React.FC<{
   Comments: Record<string, SubFeedType> | [];
   feedkey: string;
@@ -20,8 +18,9 @@ export const FeedItemReply: React.FC<{
   const [loading, setLoading] = useState<boolean>(false);
   const feeds = useSelector(getFeeds);
   const dataProps = useSelector(getProps);
-  const { readOnly, onError, cId } = dataProps;
+  const { readOnly, onError, clientId, numberOfSeeMoreReplyComment } = dataProps;
   const [pageSeeMore, setPageSeeMore] = useState<number>(1);
+  const LIMIT = numberOfSeeMoreReplyComment ?? 5;
 
   const onLikeComment = useCallback(
     (commentkey: string) => {
@@ -76,7 +75,7 @@ export const FeedItemReply: React.FC<{
     [dispatch, feeds, feedkey, readOnly, onError]
   );
 
-  const onViewMore = useCallback(() => {
+  const onSeeMore = useCallback(() => {
     setLoading(true);
     request
       .get('/api/feed/getcomments', {
@@ -130,7 +129,7 @@ export const FeedItemReply: React.FC<{
 
         return (
           <div className="flex items-start mt-4" key={`${UserID}_${index}`}>
-            <img src={`${SOCOLA_AVATAR_URL}?cid=${cId}&uid=${UserID}`} className="w-8 h-8 rounded-full" />
+            <img src={`${SOCOLA_AVATAR_URL}?cid=${clientId}&uid=${UserID}`} className="w-8 h-8 rounded-full" />
             <div className="ml-4">
               <div className="bg-gray-100 px-4 py-2 rounded-lg">
                 <div>
@@ -174,7 +173,7 @@ export const FeedItemReply: React.FC<{
       {CommentCount > 5 && LIMIT * pageSeeMore < CommentCount && (
         <button
           className="flex items-center rounded-md mt-4 ml-3 text-sm font-medium duration-300 hover:underline"
-          onClick={onViewMore}
+          onClick={onSeeMore}
         >
           <span className="text-gray-600">
             <svg

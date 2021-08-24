@@ -9,7 +9,7 @@ import { Socola } from '@ekidpro/socola';
   moduleId="your_module_id"
   secretKey="your_secret_key"
   token="your_token"
-  cId="your_cid"
+  clientId="your_client_id"
   // and another optional props
 />
 ```

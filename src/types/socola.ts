@@ -14,7 +14,7 @@ export interface SocolaProps {
   showStatus?: boolean; // hien thi dropdown status
   readOnly?: boolean; // ko cho edit feed, ko hien thi text area
   renderType?: 'minimum' | 'social'; // hinh thuc hien thi feed
-  cId: string; // la cai gi do o phia api can de hien thi avatar (vi du cms ekidpro thi cid='ekidpro')
+  clientId: string; // client Id
 
   userInfo?: {
     id: number;
@@ -25,4 +25,5 @@ export interface SocolaProps {
 
   onError?: (e: string, type: 'get' | 'put' | 'post' | 'delete') => void;
   onShowImageFeed?: (src: string, index: number) => void;
+  numberOfSeeMoreReplyComment?: number; // so luong tra loi binh luan xem them muon hien thi - mac dinh 5
 }

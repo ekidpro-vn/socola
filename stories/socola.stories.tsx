@@ -19,7 +19,7 @@ DefaultSocola.args = {
   moduleId: 'feedback',
   token: 'f748a60cb3980c4009302959d72d7a4f',
   // channelId: '',
-  cId: 'ekidpro',
+  clientId: 'ekidpro',
   secretKey: 'rtSsf3VeJ8r2cnHgadx5ObYY50Ael8VG',
   recordId: '15803',
   showDate: true,
