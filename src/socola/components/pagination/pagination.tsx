@@ -65,7 +65,7 @@ export const Pagination: React.FC = () => {
     }
   }
 
-  if (!pagination || listPage.length < 1) {
+  if (!pagination || listPage.length < 2) {
     return null;
   }
 
